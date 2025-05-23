@@ -1,0 +1,402 @@
+<UILogic>:
+    robot_spinner: robot_spinner
+    task_spinner: task_spinner
+    elevator_spinner: elevator_spinner
+    scenario_spinner: scenario_spinner
+    target_spinner: target_spinner
+    protocol_spinner: protocol_spinner
+    #rpf_protocol_spinner: rpf_protocol_spinner
+    #rob_protocol_spinner: rob_protocol_spinner
+    terminal_output: terminal_output
+    start_button: start_button
+    stop_button: stop_button
+    reset_button: reset_button
+    load_button: load_button
+    toggle_button: toggle_button
+    output_container: output_container
+    collapsible_panel: collapsible_panel
+
+    canvas.before:
+        Color:
+            rgba: 0.678, 0.847, 0.902, 1  # Light blue
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint: (1, 1)
+        padding: 0
+        spacing: 0
+
+        BoxLayout:
+            #cols: 1
+            orientation: 'vertical'
+            size_hint_x: 1
+            width: root.initial_width
+            padding: 10
+            spacing: 10
+
+
+            #Settings yaml_FILE
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                spacing: 0
+                #height: 50
+                size_hint_y: 0.1
+
+                Label:
+                    text: "Settings Option"
+                    color: 0, 0, 0, 1  # Black text color
+                    bold: True
+                    size_hint_x: 0.3
+                    #size_hint_y: None
+                    #height: 50
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.66
+                    #size_hint_y: None
+                    #height: 50
+
+                    Button:
+                        text: "Yaml File"
+                        on_press: root.open_yaml_file()
+                        #background_color: 0,0.4 , 0.6, 0.8
+                        background_color: 0, 0.2, 0.4, 1
+                        #size_hint_y: None
+                        size_hint_x: 0.7
+                        #height: 50
+
+            # Protocol selection
+            BoxLayout:
+                orientation: 'horizontal'
+                spacing: 20
+                size_hint_y: 0.1
+
+                Label:
+                    text: "Protocol"
+                    color: 0, 0, 0, 1  # Black text color
+                    bold: True
+                    size_hint_x: 0.3
+
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.7
+
+                    Spinner:
+                        id: protocol_spinner
+                        text: "Select Protocol"
+                        values: root.protocol_list
+                        background_color: 0,0.4 , 0.6, 0.8
+
+
+
+
+
+            # Robot selection
+            BoxLayout:
+                orientation: 'horizontal'
+                #size_hint_y: None
+                spacing: 10
+                #height: 50
+                size_hint_y: 0.1
+                Label:
+                    text: " Robot "
+                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_x: 0.3
+                    size_hint_y: None
+                    height: 50
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.68
+                    #size_hint_y: None
+                    #height: 50
+
+                    Spinner:
+                        id: robot_spinner
+                        text: "Select Robot"
+                        values: root.robot_list
+                        background_color: 0,0.4 , 0.6, 0.8
+
+                    Button:
+                        text: "+Add Robot"
+                        on_press: root.add_robot()
+                        #size_hint_y: None
+                        #height: 50
+                        background_color: 0,0.4 , 0.6, 0.8
+
+
+            # Elevator selection
+            BoxLayout:
+                orientation: 'horizontal'
+                #size_hint_y: None
+                spacing: 20
+                #height: 50
+                size_hint_y: 0.1
+
+                Label:
+                    text: "Elevator"
+                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_x: 0.3
+                    #size_hint_y: None
+                    #height: 50
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.7
+                    #size_hint_y: None
+                    #height: 50
+
+                    Spinner:
+                        id: elevator_spinner
+                        text: "Select Elevator"
+                        values: root.elevator_list
+                        #size_hint_y: None
+                        #height: 50
+                        background_color: 0,0.4 , 0.6, 0.8
+
+                    Button:
+                        text: "+Add ELV"
+                        on_press: root.add_elevator()
+                        #size_hint_y: None
+                        #height: 50
+                        background_color: 0,0.4 , 0.6, 0.8
+
+
+            # Task selection
+            BoxLayout:
+                orientation: 'horizontal'
+                #size_hint_y: None
+                spacing: 20
+                #height: 50
+                size_hint_y: 0.1
+
+                Label:
+                    text: "Task"
+                    color: 0, 0, 0, 1  # Black text color
+                    bold: True
+                    size_hint_x: 0.3
+                    #size_hint_y: None
+                    #height: 50
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.7
+                    #size_hint_y: None
+                    #height: 50
+
+                    Spinner:
+                        id: task_spinner
+                        text: "Select Task"
+                        values: root.task_list
+                        #size_hint_y: None
+                        #height: 50
+                        background_color: 0,0.4 , 0.6, 0.8
+
+                    Button:
+                        text: "+Add Task"
+                        on_press: root.add_task()
+                        #size_hint_y: None
+                        #height: 50
+                        background_color: 0,0.4 , 0.6, 0.8
+
+
+            # Attack scenario selection
+            BoxLayout:
+                orientation: 'horizontal'
+                #size_hint_y: None
+                spacing: 20
+                #height: 50
+                size_hint_y: 0.1
+
+                Label:
+                    text: "Attack-Scenario"
+                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_x: 0.3
+                    #size_hint_y: None
+                    #height: 50
+
+                Spinner:
+                    id: scenario_spinner
+                    text: "Select Scenario"
+                    values: root.scenario_list
+                    on_text: root.on_scenario_spinner_select(self, self.text)
+                    size_hint_x: 0.7
+                    #size_hint_y: None
+                    #height: 50
+                    background_color: 0,0.4 , 0.6, 0.8
+
+
+
+            # Target selection
+            BoxLayout:
+                orientation: 'horizontal'
+                #size_hint_y: None
+                spacing: 20
+                #height: 50
+                size_hint_y: 0.1
+
+                Label:
+                    text: "Target"
+                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_x: 0.3
+                    #size_hint_y: None
+                    #height: 50
+
+                Spinner:
+                    id: target_spinner
+                    text: "Select Target"
+                    values: root.target_list
+                    size_hint_x: 0.7
+                    #size_hint_y: None
+                    #height: 50
+                    background_color: 0,0.4 , 0.6, 0.8
+
+            Widget:
+                size_hint_y: 0.1
+                #height: 40 # 空白区域的高度
+
+
+            # Buttons for simulation control
+            BoxLayout:
+                orientation: 'horizontal'
+                #size_hint_y: None
+                #height: 50
+                size_hint_y: 0.15
+                spacing: 20
+                padding: [0, 10, 0, 10]
+
+                Button:
+                    id: start_button
+                    text: "Start"
+                    background_color: 0, 1, 0, 0.8
+                    on_press: root.on_start_button_click()
+
+
+                Button:
+                    id: stop_button
+                    text: "Stop"
+                    on_press: root.stop_simulation()
+                    background_color: 1, 0, 0, 0.8
+
+
+                Button:
+                    id: reset_button
+                    text: "Reset"
+                    background_color: 1, 0.9, 0, 0.8
+
+                    on_press: root.reset_simulation()
+
+                Button:
+                    id: load_button
+                    text: "Load Results"
+                    background_color: 0,0.4 , 0.6, 0.8
+
+                    on_press: root.load_results()
+
+                # 展开按钮
+                Button:
+                    id: toggle_button
+                    text: "Expand/Collapse"
+
+                    on_press: root.toggle_window()
+
+            Widget:
+                size_hint_y: None
+                height: 90 # 空白区域的高度
+
+
+
+
+        # 折叠面板
+        BoxLayout:
+            id: collapsible_panel
+            orientation: 'vertical'
+            size_hint_x: None
+            width: root.panel_width if root.panel_visible else 0
+            opacity: 1 if root.panel_visible else 0 #透明度
+            disabled: not root.panel_visible
+            spacing: 5
+            padding: 10
+
+            canvas.before:
+                Color:
+                    # rgba: 1, 1, 1, 1  # 设置为白色背景
+                    rgba: 0.678, 0.847, 0.902, 1  # Light blue
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            # Terminal output area
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                #height: 300
+                size_hint_y:0.5
+                width: self.parent.width
+
+                Label:
+                    text: "Terminal Output"
+                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_x: 1
+                    size_hint_y: 0.1
+                    #height: 20
+
+                TextInput:
+                    id: terminal_output
+                    text: ""
+                    multiline: True
+                    size_hint_x: 1
+                    size_hint_y: 0.9
+                    #height: 180
+
+
+            # 输出文件名区域
+            BoxLayout:
+                orientation: 'vertical'
+                #height: 300
+                size_hint_y:0.5
+                width: self.parent.width
+
+                Label:
+                    text: "Generated files"
+                    color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_x: 1
+                    size_hint_y: 0.1
+                    #height: 20
+
+                BoxLayout:
+                    size_hint_y: None
+                    #height: 250
+                    size_hint_y:0.9
+                    canvas.before:
+                        Color:
+                            rgba: 1, 1, 1, 1  # White background
+                        Rectangle:
+                            pos: self.pos
+                            size: self.size
+                        Color:
+                            rgba: 0, 0, 0, 1  # Black border
+                        Line:
+                            width: 0.5
+                            rectangle: self.x, self.y, self.width, self.height
+
+                    GridLayout:
+                        id: output_container
+                        cols: 1
+                        size_hint_y: 1
+                        #height: 250
+                        row_default_height: 30
+                        row_force_default: True
+                        padding: 10
+                        spacing: 5
