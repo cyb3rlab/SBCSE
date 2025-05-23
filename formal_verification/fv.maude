@@ -1,0 +1,758 @@
+fmod NZNAT is
+    pr NAT .
+    subsort NzNat < Nat .
+    op N : -> NzNat .
+    eq N = 1 .
+endfm
+
+fmod ELV.state is 
+	sort Elv.state . 
+	ops elvq3.ELV.state elvq5.ELV.state elvq4.ELV.state elvq2.ELV.state elvq0.ELV.state elvq7.ELV.state elvq1.ELV.state elvq6.ELV.state : -> Elv.state .
+endfm
+
+fmod ELV.movingStatus is 
+	sort Elv.movingstatus . 
+	ops stay.ELV.movingStatus up.ELV.movingStatus : -> Elv.movingstatus .
+endfm
+
+fmod ELV.sendcmd is 
+	sort Elv.sendcmd . 
+	ops recvcommandresponsegoarrive.ELV.recvcommandresponsegoarrive recvcommandresponsecallarrive.ELV.recvcommandresponsecallarrive recvcommandresponsegoaccept.ELV.recvcommandresponsegoaccept recvcommandresponseinterlocktruesuccess.ELV.recvcommandresponseinterlocktruesuccess recvcommandresponsecallaccept.ELV.recvcommandresponsecallaccept recvcommandresponseclosesuccess.ELV.recvcommandresponseclosesuccess recvcommandresponseopensuccess.ELV.recvcommandresponseopensuccess recvcommandresponseinterlockfalsesuccess.ELV.recvcommandresponseinterlockfalsesuccess : -> Elv.sendcmd .
+endfm
+
+fmod ROB.state is 
+	sort Rob.state . 
+	ops robq2.ROB.state robq0.ROB.state robq1.ROB.state : -> Rob.state .
+endfm
+
+fmod ROB.movingStatus is 
+	sort Rob.movingstatus . 
+	ops Stopping.ROB.movingStatus Wait.ROB.movingStatus Calling.ROB.movingStatus GoToELV.ROB.movingStatus GettingOff.ROB.movingStatus Waiting.ROB.movingStatus GettingOn.ROB.movingStatus : -> Rob.movingstatus .
+endfm
+
+fmod ROB.sendcmd is 
+	sort Rob.sendcmd . 
+	ops recvcommandGoToELVsuccessNone.ROB.recvcommandGoToELVsuccessNone recvcommandGettingOffsuccessNone.ROB.recvcommandGettingOffsuccessNone recvcommandGettingOncompleted.ROB.recvcommandGettingOncompleted recvcommandGettingOffcompleted.ROB.recvcommandGettingOffcompleted recvcommandCallingsuccessNone.ROB.recvcommandCallingsuccessNone recvcommandGettingOnsuccessNone.ROB.recvcommandGettingOnsuccessNone recvcommandGoToELVcompleted.ROB.recvcommandGoToELVcompleted : -> Rob.sendcmd .
+endfm
+
+fmod ELV.recvcmd is 
+	sort Elv.recvcmd . 
+	ops go.ELV.recvcmd interlockFalse.ELV.recvcmd call.ELV.recvcmd interlockTrue.ELV.recvcmd open.ELV.recvcmd close.ELV.recvcmd : -> Elv.recvcmd .
+endfm
+
+fmod BOS.recvcmd is 
+	sort Bos.recvcmd . 
+	ops interlock.BOS.recvcmd close.BOS.recvcmd open.BOS.recvcmd interlocktrue.BOS.recvcmd call.BOS.recvcmd go.BOS.recvcmd interlockfalse.BOS.recvcmd : -> Bos.recvcmd .
+endfm
+
+fmod BOS.sendcmd is 
+	pr NZNAT .
+	sort Bos.sendcmd . 
+	subsort NzNat < Bos.sendcmd . 
+
+endfm
+
+fmod RCP.rcpstatus is 
+	sort Rcp.rcpstatus . 
+	ops r1e1.RCP.rcpstatus r3e9.RCP.rcpstatus completed.RCP.rcpstatus r3e8.RCP.rcpstatus r0e0.RCP.rcpstatus r2e7.RCP.rcpstatus r1e3.RCP.rcpstatus r1e2.RCP.rcpstatus r2e6.RCP.rcpstatus r2e5.RCP.rcpstatus r1e4.RCP.rcpstatus r1e0.RCP.rcpstatus calling.RCP.rcpstatus r2e8.RCP.rcpstatus r2e4.RCP.rcpstatus : -> Rcp.rcpstatus .
+endfm
+
+fmod RCP.retries is 
+	pr NZNAT .
+	sort Rcp.retries . 
+	subsort NzNat < Rcp.retries . 
+
+endfm
+
+fmod RCP.sendcmd is 
+	sort Rcp.sendcmd . 
+	ops sendinterlockcommandTrue.RCP.sendinterlockcommandTrue sendB2RcommandGettingOnGettingOnrob1.RCP.sendB2RcommandGettingOnGettingOnrob1 sendgocommand5.RCP.sendgocommand5 sendB2RcommandGettingOffGettingOffrob1.RCP.sendB2RcommandGettingOffGettingOffrob1 sendopencommand.RCP.sendopencommand sendcallcommand2up.RCP.sendcallcommand2up sendinterlockcommandFalse.RCP.sendinterlockcommandFalse sendB2RcommandGoToELVWaitrob1.RCP.sendB2RcommandGoToELVWaitrob1 sendB2Rcommand5CallingCallingrob1.RCP.sendB2Rcommand5CallingCallingrob1 sendclosecommand.RCP.sendclosecommand : -> Rcp.sendcmd .
+endfm
+
+fmod RCP.recvcmd is 
+	sort Rcp.recvcmd . 
+	ops GettingOff.RCP.recvcmd interlockfalse.RCP.recvcmd call.RCP.recvcmd interlocktrue.RCP.recvcmd close.RCP.recvcmd open.RCP.recvcmd GoToELV.RCP.recvcmd go.RCP.recvcmd GettingOn.RCP.recvcmd Calling.RCP.recvcmd : -> Rcp.recvcmd .
+endfm
+
+fmod ROB.recvcmd is 
+	sort Rob.recvcmd . 
+	ops GoToELV.ROB.recvcmd GettingOff.ROB.recvcmd GettingOn.ROB.recvcmd Calling.ROB.recvcmd : -> Rob.recvcmd .
+endfm
+
+fmod PID is 
+	sort Pid . 
+	ops ELV BOS RCP ROB : -> Pid [ctor] .
+endfm
+
+fmod MESSAGE is 
+	pr ELV.sendcmd .
+	pr ROB.sendcmd .
+	pr ELV.recvcmd .
+	pr BOS.recvcmd .
+	pr BOS.sendcmd .
+	pr RCP.sendcmd .
+	pr RCP.recvcmd .
+	pr ROB.recvcmd .
+	sort Message . 
+	op msg : Elv.sendcmd -> Message [ctor] .
+	op msg : Rob.sendcmd -> Message [ctor] .
+	op msg : Elv.recvcmd -> Message [ctor] .
+	op msg : Bos.recvcmd -> Message [ctor] .
+	op msg : Bos.sendcmd -> Message [ctor] .
+	op msg : Rcp.sendcmd -> Message [ctor] .
+	op msg : Rcp.recvcmd -> Message [ctor] .
+	op msg : Rob.recvcmd -> Message [ctor] .
+
+endfm
+
+fmod NETWORK is
+    pr MESSAGE .
+    sort Network .
+    subsort Message < Network .
+    op void : -> Network [ctor] .
+    op _ _ : Network Network -> Network [ctor assoc comm id: void] .
+    op _\in_ : Message Network -> Bool .
+    op del : Network Message -> Network .
+    op delall : Network Message -> Network .
+    var M : Message .
+    var N : Network .
+    eq M \in (M N) = true .
+    eq M \in N = false [owise] .
+    eq del((M N),M) = N .
+    eq del(N,M) = N [owise] .
+    eq delall((M N),M) = delall(N, M) .
+    eq delall(N,M) = N [owise] .
+endfm
+
+fmod TRAN is 
+	pr PID .
+	sort Tran . 
+	op tran31 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran34 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran9 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran21 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran0 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran7 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran38 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran39 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran30 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran36 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran35 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran6 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran22 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran25 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran5 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran27 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran28 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran33 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran24 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran23 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran1 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran14 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran40 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran10 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran15 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran2 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran17 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran11 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran12 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran8 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran4 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran19 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran3 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran13 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran37 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran18 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran20 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran29 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran26 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran16 : -> Tran [ctor] .
+	op notran : -> Tran [ctor] .
+	op tran32 : -> Tran [ctor] .
+
+endfm
+
+fmod OCOM is 
+	pr NETWORK .
+	pr PID .
+	pr TRAN .
+	pr NZNAT .
+	pr ELV.state .
+	pr ELV.movingStatus .
+	pr ROB.state .
+	pr ROB.movingStatus .
+	pr RCP.rcpstatus .
+	pr RCP.retries .
+	sort OCom . 
+	op ELV.state:_  : Elv.state -> OCom .
+	op ELV.movingStatus:_  : Elv.movingstatus -> OCom .
+	op ROB.state:_  : Rob.state -> OCom .
+	op ROB.movingStatus:_  : Rob.movingstatus -> OCom .
+	op RCP.rcpstatus:_  : Rcp.rcpstatus -> OCom .
+	op RCP.retries:_  : Rcp.retries -> OCom .
+	op nw:_  : Network -> OCom .
+	op tran:_  : Tran -> OCom .
+
+endfm
+
+fmod CONFIG is
+    pr OCOM .
+    sort Config .
+    subsort OCom < Config .
+    op __ : Config Config -> Config [ctor assoc comm] .
+endfm
+
+fmod INIT-CONFIG is 
+	pr CONFIG .
+	op ic : -> Config .
+	eq ic = (ELV.state: elvq0.ELV.state) (ELV.movingStatus: stay.ELV.movingStatus) (ROB.state: robq0.ROB.state) (ROB.movingStatus: Wait.ROB.movingStatus) (RCP.rcpstatus: r0e0.RCP.rcpstatus) (RCP.retries: 0) (nw: void) (tran: notran) .
+endfm
+
+mod RCP is 
+	pr CONFIG .
+	var NW : Network .
+	var T : Tran .
+
+	rl [tran0] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r0e0.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r0e0.RCP.rcpstatus)
+		(nw: (msg(GoToELV.ROB.recvcmd) NW))
+		(tran: tran0) .
+
+	rl [tran1] :
+		(ROB.state: robq0.ROB.state)
+		(ROB.movingStatus: Wait.ROB.movingStatus)
+		(nw: (msg(GoToELV.ROB.recvcmd) NW))
+		(tran: T)
+		=>
+		(ROB.state: robq0.ROB.state)
+		(ROB.movingStatus: GoToELV.ROB.movingStatus)
+		(nw: NW)
+		(tran: tran1) .
+
+	rl [tran2] :
+		(ROB.state: robq0.ROB.state)
+		(ROB.movingStatus: GoToELV.ROB.movingStatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(ROB.state: robq1.ROB.state)
+		(ROB.movingStatus: GoToELV.ROB.movingStatus)
+		(nw: (msg(GoToELV.RCP.recvcmd) NW))
+		(tran: tran2) .
+
+	rl [tran3] :
+		(RCP.rcpstatus: r0e0.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(GoToELV.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r1e0.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran3) .
+
+	rl [tran4] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r1e0.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r1e0.RCP.rcpstatus)
+		(nw: (msg(interlockTrue.ELV.recvcmd) NW))
+		(tran: tran4) .
+
+	rl [tran5] :
+		(ELV.state: elvq0.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(interlockTrue.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.state: elvq1.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(interlocktrue.RCP.recvcmd) NW))
+		(tran: tran5) .
+
+	rl [tran6] :
+		(RCP.rcpstatus: r1e0.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(interlocktrue.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: calling.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran6) .
+
+	rl [tran7] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: calling.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: calling.RCP.rcpstatus)
+		(nw: (msg(Calling.ROB.recvcmd) NW))
+		(tran: tran7) .
+
+	rl [tran8] :
+		(ROB.movingStatus: GoToELV.ROB.movingStatus)
+		(ROB.state: robq1.ROB.state)
+		(nw: (msg(Calling.ROB.recvcmd) NW))
+		(tran: T)
+		=>
+		(ROB.movingStatus: Calling.ROB.movingStatus)
+		(ROB.state: robq1.ROB.state)
+		(nw: (msg(Calling.RCP.recvcmd) NW))
+		(tran: tran8) .
+
+	rl [tran9] :
+		(RCP.rcpstatus: calling.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(Calling.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r1e1.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran9) .
+
+	rl [tran10] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r1e1.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r1e1.RCP.rcpstatus)
+		(nw: (msg(call.ELV.recvcmd) NW))
+		(tran: tran10) .
+
+	rl [tran11] :
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(ELV.state: elvq1.ELV.state)
+		(nw: (msg(call.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.movingStatus: up.ELV.movingStatus)
+		(ELV.state: elvq2.ELV.state)
+		(nw: NW)
+		(tran: tran11) .
+
+	rl [tran12] :
+		(ELV.movingStatus: up.ELV.movingStatus)
+		(ELV.state: elvq2.ELV.state)
+		(nw: NW)
+		(tran: T)
+		=>
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(ELV.state: elvq2.ELV.state)
+		(nw: (msg(call.RCP.recvcmd) NW))
+		(tran: tran12) .
+
+	rl [tran13] :
+		(RCP.rcpstatus: r1e1.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r1e2.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(call.RCP.recvcmd) NW))
+		(tran: tran13) .
+
+	rl [tran14] :
+		(RCP.rcpstatus: r1e2.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(call.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r1e3.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran14) .
+
+	rl [tran15] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r1e3.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r1e3.RCP.rcpstatus)
+		(nw: (msg(open.ELV.recvcmd) NW))
+		(tran: tran15) .
+
+	rl [tran16] :
+		(ELV.state: elvq2.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(open.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.state: elvq3.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(open.RCP.recvcmd) NW))
+		(tran: tran16) .
+
+	rl [tran17] :
+		(RCP.rcpstatus: r1e3.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(open.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r1e4.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran17) .
+
+	rl [tran18] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r1e4.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r1e4.RCP.rcpstatus)
+		(nw: (msg(GettingOn.ROB.recvcmd) NW))
+		(tran: tran18) .
+
+	rl [tran19] :
+		(ROB.state: robq1.ROB.state)
+		(ROB.movingStatus: Calling.ROB.movingStatus)
+		(nw: (msg(GettingOn.ROB.recvcmd) NW))
+		(tran: T)
+		=>
+		(ROB.state: robq1.ROB.state)
+		(ROB.movingStatus: GettingOn.ROB.movingStatus)
+		(nw: NW)
+		(tran: tran19) .
+
+	rl [tran20] :
+		(ROB.movingStatus: GettingOn.ROB.movingStatus)
+		(ROB.state: robq1.ROB.state)
+		(nw: NW)
+		(tran: T)
+		=>
+		(ROB.movingStatus: Stopping.ROB.movingStatus)
+		(ROB.state: robq2.ROB.state)
+		(nw: (msg(GettingOn.RCP.recvcmd) NW))
+		(tran: tran20) .
+
+	rl [tran21] :
+		(RCP.rcpstatus: r1e4.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(GettingOn.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r2e4.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(close.ELV.recvcmd) NW))
+		(tran: tran21) .
+
+	rl [tran22] :
+		(ELV.state: elvq3.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(close.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.state: elvq4.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(close.RCP.recvcmd) NW))
+		(tran: tran22) .
+
+	rl [tran23] :
+		(RCP.rcpstatus: r2e4.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(close.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r2e5.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran23) .
+
+	rl [tran24] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r2e5.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r2e5.RCP.rcpstatus)
+		(nw: (msg(go.ELV.recvcmd) NW))
+		(tran: tran24) .
+
+	rl [tran25] :
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(ELV.state: elvq4.ELV.state)
+		(nw: (msg(go.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.movingStatus: up.ELV.movingStatus)
+		(ELV.state: elvq5.ELV.state)
+		(nw: NW)
+		(tran: tran25) .
+
+	rl [tran26] :
+		(ELV.movingStatus: up.ELV.movingStatus)
+		(ELV.state: elvq5.ELV.state)
+		(nw: NW)
+		(tran: T)
+		=>
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(ELV.state: elvq5.ELV.state)
+		(nw: (msg(go.RCP.recvcmd) NW))
+		(tran: tran26) .
+
+	rl [tran27] :
+		(RCP.rcpstatus: r2e5.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r2e6.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(go.RCP.recvcmd) NW))
+		(tran: tran27) .
+
+	rl [tran28] :
+		(RCP.rcpstatus: r2e6.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(go.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r2e7.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran28) .
+
+	rl [tran29] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r2e7.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r2e7.RCP.rcpstatus)
+		(nw: (msg(open.ELV.recvcmd) NW))
+		(tran: tran29) .
+
+	rl [tran30] :
+		(ELV.state: elvq5.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(open.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.state: elvq6.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(open.RCP.recvcmd) NW))
+		(tran: tran30) .
+
+	rl [tran31] :
+		(RCP.rcpstatus: r2e7.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(open.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r2e8.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran31) .
+
+	rl [tran32] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r2e8.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r2e8.RCP.rcpstatus)
+		(nw: (msg(GettingOff.ROB.recvcmd) NW))
+		(tran: tran32) .
+
+	rl [tran33] :
+		(ROB.state: robq2.ROB.state)
+		(ROB.movingStatus: Stopping.ROB.movingStatus)
+		(nw: (msg(GettingOff.ROB.recvcmd) NW))
+		(tran: T)
+		=>
+		(ROB.state: robq2.ROB.state)
+		(ROB.movingStatus: GettingOff.ROB.movingStatus)
+		(nw: NW)
+		(tran: tran33) .
+
+	rl [tran34] :
+		(ROB.movingStatus: GettingOff.ROB.movingStatus)
+		(ROB.state: robq2.ROB.state)
+		(nw: NW)
+		(tran: T)
+		=>
+		(ROB.movingStatus: Waiting.ROB.movingStatus)
+		(ROB.state: robq0.ROB.state)
+		(nw: (msg(GettingOff.RCP.recvcmd) NW))
+		(tran: tran34) .
+
+	rl [tran35] :
+		(RCP.rcpstatus: r2e8.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(GettingOff.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r3e8.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(close.ELV.recvcmd) NW))
+		(tran: tran35) .
+
+	rl [tran36] :
+		(ELV.state: elvq6.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(close.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.state: elvq7.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(close.RCP.recvcmd) NW))
+		(tran: tran36) .
+
+	rl [tran37] :
+		(RCP.rcpstatus: r3e8.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: (msg(close.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r3e9.RCP.rcpstatus)
+		(RCP.retries: 0)
+		(nw: NW)
+		(tran: tran37) .
+
+	rl [tran38] :
+		(RCP.retries: 0)
+		(RCP.rcpstatus: r3e9.RCP.rcpstatus)
+		(nw: NW)
+		(tran: T)
+		=>
+		(RCP.retries: 1)
+		(RCP.rcpstatus: r3e9.RCP.rcpstatus)
+		(nw: (msg(interlockFalse.ELV.recvcmd) NW))
+		(tran: tran38) .
+
+	rl [tran39] :
+		(ELV.state: elvq7.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(interlockFalse.ELV.recvcmd) NW))
+		(tran: T)
+		=>
+		(ELV.state: elvq0.ELV.state)
+		(ELV.movingStatus: stay.ELV.movingStatus)
+		(nw: (msg(interlockfalse.RCP.recvcmd) NW))
+		(tran: tran39) .
+
+	rl [tran40] :
+		(RCP.rcpstatus: completed.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: (msg(interlockfalse.RCP.recvcmd) NW))
+		(tran: T)
+		=>
+		(RCP.rcpstatus: r0e0.RCP.rcpstatus)
+		(RCP.retries: 1)
+		(nw: NW)
+		(tran: tran40) .
+
+endm
+
+in model-checker .
+
+mod RCP-PROP is
+    pr RCP .
+    inc SATISFACTION .
+    subsort Config < State . 
+    op enabled : Tran -> Prop .
+    op applied : Tran -> Prop .
+    op wait : -> Prop .
+    op want : -> Prop .
+    op crit : -> Prop .
+    op leavecrit : -> Prop .
+    
+    op inDrivingPermission1 : -> Prop .
+    op arrived1 : -> Prop .
+    op opened1 : -> Prop .
+    op closed1 : -> Prop .
+    op arrived2 : -> Prop .
+    op opened2 : -> Prop .
+    op closed2 : -> Prop .
+    op inDrivingPermission2 : -> Prop .
+    var S : State .
+    var C : Config .
+    var PR : Prop .
+    var T : Tran .
+
+    eq (tran: T) C |= applied(T) = true .
+
+    eq (RCP.rcpstatus: r0e0.RCP.rcpstatus) (ROB.state: robq0.ROB.state) (ELV.state: elvq0.ELV.state ) C |= want = true .
+    eq (RCP.rcpstatus: r3e9.RCP.rcpstatus) (ROB.state: robq0.ROB.state) (ELV.state: elvq0.ELV.state ) C |= inDrivingPermission2 = true .
+
+    eq C |= PR = false [owise] .
+endm
+
+mod RCP-FORMULA is
+    pr RCP-PROP .
+    pr INIT-CONFIG .
+    inc MODEL-CHECKER .
+    inc LTL-SIMPLIFIER .
+
+    op mutex : -> Formula .
+    ops liveness liveness1 liveness2 liveness3 liveness4 liveness5 : -> Formula .
+
+    var T : Tran .
+    eq liveness = want |-> inDrivingPermission2 .
+endm
+
+eof
+
+red in RCP-FORMULA : modelCheck(ic,liveness) .
+

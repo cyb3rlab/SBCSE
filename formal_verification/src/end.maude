@@ -1,0 +1,50 @@
+in model-checker .
+
+mod RCP-PROP is
+    pr RCP .
+    inc SATISFACTION .
+    subsort Config < State . 
+    op enabled : Tran -> Prop .
+    op applied : Tran -> Prop .
+    op wait : -> Prop .
+    op want : -> Prop .
+    op crit : -> Prop .
+    op leavecrit : -> Prop .
+    
+    op inDrivingPermission1 : -> Prop .
+    op arrived1 : -> Prop .
+    op opened1 : -> Prop .
+    op closed1 : -> Prop .
+    op arrived2 : -> Prop .
+    op opened2 : -> Prop .
+    op closed2 : -> Prop .
+    op inDrivingPermission2 : -> Prop .
+    var S : State .
+    var C : Config .
+    var PR : Prop .
+    var T : Tran .
+
+    eq (tran: T) C |= applied(T) = true .
+
+    eq (RCP.rcpstatus: r0e0.RCP.rcpstatus) (ROB.state: robq0.ROB.state) (ELV.state: elvq0.ELV.state ) C |= want = true .
+    eq (RCP.rcpstatus: r3e9.RCP.rcpstatus) (ROB.state: robq0.ROB.state) (ELV.state: elvq0.ELV.state ) C |= inDrivingPermission2 = true .
+
+    eq C |= PR = false [owise] .
+endm
+
+mod RCP-FORMULA is
+    pr RCP-PROP .
+    pr INIT-CONFIG .
+    inc MODEL-CHECKER .
+    inc LTL-SIMPLIFIER .
+
+    op mutex : -> Formula .
+    ops liveness liveness1 liveness2 liveness3 liveness4 liveness5 : -> Formula .
+
+    var T : Tran .
+    eq liveness = want |-> inDrivingPermission2 .
+endm
+
+eof
+
+red in RCP-FORMULA : modelCheck(ic,liveness) .

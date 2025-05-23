@@ -1,0 +1,6 @@
+fmod NZNAT is
+    pr NAT .
+    subsort NzNat < Nat .
+    op N : -> NzNat .
+    eq N = 1 .
+endfm

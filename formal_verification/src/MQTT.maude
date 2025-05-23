@@ -1,0 +1,18 @@
+fmod NETWORK is
+    pr MESSAGE .
+    sort Network .
+    subsort Message < Network .
+    op void : -> Network [ctor] .
+    op _ _ : Network Network -> Network [ctor assoc comm id: void] .
+    op _\in_ : Message Network -> Bool .
+    op del : Network Message -> Network .
+    op delall : Network Message -> Network .
+    var M : Message .
+    var N : Network .
+    eq M \in (M N) = true .
+    eq M \in N = false [owise] .
+    eq del((M N),M) = N .
+    eq del(N,M) = N [owise] .
+    eq delall((M N),M) = delall(N, M) .
+    eq delall(N,M) = N [owise] .
+endfm

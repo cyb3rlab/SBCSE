@@ -1,0 +1,6 @@
+fmod CONFIG is
+    pr OCOM .
+    sort Config .
+    subsort OCom < Config .
+    op __ : Config Config -> Config [ctor assoc comm] .
+endfm

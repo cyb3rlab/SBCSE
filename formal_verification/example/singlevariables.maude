@@ -1,0 +1,879 @@
+fmod STATUS is
+    sort Status .
+    ops elvq0 elvq1 elvq2 elvq3 elvq4 elvq5 elvq6 elvq7 : -> Status [ctor] .
+    op  bosq : -> Status [ctor] .
+    ops robq0 robq1 robq2 robq3 robq4 : -> Status [ctor] .
+    ops r0e0 r1e0 r1e1 r1e2 r1e3 r1e4 r2e4 r2e5 r2e6 r2e7 r2e8 r3e8 r3e9 calling completed : -> Status [ctor] .
+endfm
+
+fmod MOGSTATUS is
+    sort MovingStatus .
+    ops moving stay : -> MovingStatus [ctor] .
+endfm
+
+fmod PID  is
+    sort Pid .
+    ops ELV BOS RPF ROB : -> Pid [ctor] .
+endfm
+
+fmod NZNAT is
+    pr NAT .
+    subsort NzNat < Nat .
+    op N : -> NzNat .
+    eq N = 1 .
+endfm
+
+fmod COMMAND is
+    sort Command RevCommand SeCommand .
+    subsort SeCommand RevCommand < Command .
+    ops interlock1 interlock2 call go open close                                                        : -> SeCommand [ctor] .
+    ops interlocksuccess1 interlocksuccess2 callsuccess callarrive gosuccess goarrive opensuccess closesuccess : -> RevCommand [ctor] .
+    ops gotoelv gettingon gettingoff schedulework gotocharge calling : -> SeCommand [ctor] .
+    ops gotoelvcompleted gettingoncompleted gettingoffcompleted scheduleworkcompleted gotochargecompleted callingsuccess : -> RevCommand [ctor] .
+endfm
+
+fmod TOPIC is
+    sort Topic .
+    op E2D : -> Topic .
+    op D2E : -> Topic .
+    op D2B : -> Topic .
+    op B2D : -> Topic .
+    op R2B : -> Topic .
+    op B2R : -> Topic .
+endfm
+
+fmod MESSAGE is 
+    pr COMMAND .
+    pr TOPIC .
+    sort Message .
+    op msg : Topic Command -> Message [ctor] .
+endfm
+
+fmod NETWORK is
+  pr MESSAGE .
+  sort Network .
+  subsort Message < Network .
+  op void : -> Network [ctor] .
+  op _ _ : Network Network -> Network [ctor assoc comm id: void] .
+  op _\in_ : Message Network -> Bool .
+  op del : Network Message -> Network .
+  var M : Message .
+  var N : Network .
+  eq M \in (M N) = true .
+  eq M \in N = false [owise] .
+  eq del((M N),M) = N .
+  eq del(N,M) = N [owise] .
+endfm
+
+fmod TRAN is
+  pr PID .
+  sort Tran .
+  op notran                     : -> Tran [ctor] .
+  op elvmoving1                 : Pid -> Tran [ctor] .
+  op elvmoving2                 : Pid -> Tran [ctor] .
+  op reforward                  : Pid -> Tran [ctor] .
+  op sendInterlock1             : Pid -> Tran [ctor] .
+  op recvInterlock1             : Pid -> Tran [ctor] .
+  op sendInterlock2             : Pid -> Tran [ctor] .
+  op recvInterlock2             : Pid -> Tran [ctor] .
+  op senterlockSuccess1         : Pid -> Tran [ctor] .
+  op recvInterlockSuccess1      : Pid -> Tran [ctor] .
+  op senterlockSuccess2         : Pid -> Tran [ctor] .
+  op recvInterlockSuccess2      : Pid -> Tran [ctor] .
+  op sendCalling                : Pid -> Tran [ctor] .
+  op recvCalling                : Pid -> Tran [ctor] .
+  op sendCallingsuccess         : Pid -> Tran [ctor] .
+  op recvCallingsuccess         : Pid -> Tran [ctor] .
+  op sendCall                   : Pid -> Tran [ctor] .
+  op recvCall                   : Pid -> Tran [ctor] .
+  op sendCallSuccess            : Pid -> Tran [ctor] .
+  op recvCallSuccess            : Pid -> Tran [ctor] .
+  op sendCallArrive             : Pid -> Tran [ctor] .
+  op recvCallArrive             : Pid -> Tran [ctor] .
+  op sendGo                     : Pid -> Tran [ctor] .
+  op recvGo                     : Pid -> Tran [ctor] .
+  op sendGoSuccess              : Pid -> Tran [ctor] .
+  op recvGoSuccess              : Pid -> Tran [ctor] .
+  op sendGoArrive               : Pid -> Tran [ctor] .
+  op recvGoArrive               : Pid -> Tran [ctor] .
+  op sendOpen1                  : Pid -> Tran [ctor] .
+  op recvOpen1                  : Pid -> Tran [ctor] .
+  op sendOpen2                  : Pid -> Tran [ctor] .
+  op recvOpen2                  : Pid -> Tran [ctor] .
+  op sendOpenSuccess1           : Pid -> Tran [ctor] .
+  op recvOpenSuccess1           : Pid -> Tran [ctor] .
+  op sendOpenSuccess2           : Pid -> Tran [ctor] .
+  op recvOpenSuccess2           : Pid -> Tran [ctor] .
+  op sendClose1                 : Pid -> Tran [ctor] .
+  op recvClose1                 : Pid -> Tran [ctor] .
+  op sendClose2                 : Pid -> Tran [ctor] .
+  op recvClose2                 : Pid -> Tran [ctor] .
+  op sendCloseSuccess1          : Pid -> Tran [ctor] .
+  op recvCloseSuccess1          : Pid -> Tran [ctor] .
+  op sendCloseSuccess2          : Pid -> Tran [ctor] .
+  op recvCloseSuccess2          : Pid -> Tran [ctor] .
+  op sendGoToElv                : Pid -> Tran [ctor] .
+  op recvGoToElv                : Pid -> Tran [ctor] .
+  op sendGoToElvCompleted       : Pid -> Tran [ctor] .
+  op recvGoToElvCompleted       : Pid -> Tran [ctor] .
+  op sendGettingOn              : Pid -> Tran [ctor] .
+  op recvGettingOn              : Pid -> Tran [ctor] .
+  op sendGettingOnCompleted     : Pid -> Tran [ctor] .
+  op recvGettingOnCompleted     : Pid -> Tran [ctor] .
+  op sendGettingOff             : Pid -> Tran [ctor] .
+  op recvGettingOff             : Pid -> Tran [ctor] .
+  op sendGettingOffCompleted    : Pid -> Tran [ctor] .
+  op recvGettingOffCompleted    : Pid -> Tran [ctor] .
+  op sendScheduleWork           : Pid -> Tran [ctor] .
+  op recvScheduleWork           : Pid -> Tran [ctor] .
+  op sendScheduleWorkCompleted  : Pid -> Tran [ctor] .
+  op recvScheduleWorkCompleted  : Pid -> Tran [ctor] .
+  op sendGoToCharge             : Pid -> Tran [ctor] .
+  op recvGoToCharge             : Pid -> Tran [ctor] .
+  op sendGoToChargeCompleted    : Pid -> Tran [ctor] .
+  op recvGoToChargeCompleted    : Pid -> Tran [ctor] .
+  op init                       : -> Tran [ctor] .
+endfm
+
+fmod OCOM is
+    pr NETWORK .
+    pr PID .
+    pr STATUS .
+    pr MOGSTATUS .
+    pr TRAN .
+    pr NZNAT .
+    sort OCom .
+    op ELV:_  : Status -> OCom .
+    op BOS:_  : Status -> OCom .
+    op RPF:_  : Status -> OCom .
+    op RPF:_  : Status -> OCom .
+    op RPF[GOTOELVSUCCESS]:_  : Bool -> OCom .
+    op RPF[GOTOELVCOMPLETED]:_  : Bool -> OCom .
+    op RPF[CALLINGSUCCESS]:_ : Bool -> OCom .
+    op RPF[GETTINGONSUCCESS]:_  : Bool -> OCom .
+    op RPF[GETTINGONCOMPLETED]:_  : Bool -> OCom .
+    op RPF[GETTINGOFFSUCCESS]:_  : Bool -> OCom .
+    op RPF[GETTINGOFFCOMPLETED]:_  : Bool -> OCom .
+    op RPF[INTERLOCKTRUESUCCESS]:_  : Bool -> OCom .
+    op RPF[INTERLOCKFALSESUCCESS]:_  : Bool -> OCom .
+    op RPF[OPENSUCCESS]:_  : Bool -> OCom .
+    op RPF[CLOSESUCCESS]:_  : Bool -> OCom .
+    op RPF[CALLACCEPT]:_  : Bool -> OCom .
+    op RPF[CALLARRIVE]:_  : Bool -> OCom .
+    op RPF[GOACCEPT]:_  : Bool -> OCom .
+    op RPF[GOARRIVE]:_  : Bool -> OCom .
+    op ROB:_  : Status -> OCom .
+    op msgCount[_]:_ : Pid Nat -> OCom .
+    op nw:_     : Network -> OCom .
+    op movingStatus[_]:_ : Pid MovingStatus -> OCom .
+    op tran:_   : Tran -> OCom .
+endfm
+
+fmod CONFIG is
+    pr OCOM .
+    sort Config .
+    subsort OCom < Config .
+    op __ : Config Config -> Config [ctor assoc comm] .
+endfm
+
+fmod INIT-CONFIG is
+    pr CONFIG .
+    op ic : -> Config .
+    eq ic = (ELV: elvq0) 
+            (movingStatus[ELV]: stay)
+            (BOS: bosq)
+            (RPF: r0e0)
+            (RPF[GOTOELVSUCCESS]: false)
+            (RPF[GOTOELVCOMPLETED]: false)
+            (RPF[CALLINGSUCCESS]: false)
+            (RPF[INTERLOCKTRUESUCCESS]: false)
+            (RPF[OPENSUCCESS]: false)
+            (RPF[CALLACCEPT]: false)
+            (RPF[CALLARRIVE]: false)
+            (RPF[GETTINGONSUCCESS]: false)
+            (RPF[GETTINGONCOMPLETED]: false)
+            (RPF[CLOSESUCCESS]: false)
+            (RPF[GOACCEPT]: false)
+            (RPF[GOARRIVE]: false)
+            (RPF[GETTINGOFFSUCCESS]: false)
+            (RPF[GETTINGOFFCOMPLETED]: false)
+            (RPF[INTERLOCKFALSESUCCESS]: false)
+            (msgCount[RPF]: 0) 
+            (ROB: robq0) 
+            (movingStatus[ROB]: stay)
+            (nw: void) 
+            (tran: notran) .
+endfm
+
+mod RCP is
+    pr CONFIG .
+    var CMD1 : SeCommand .
+    var CMD2 : RevCommand .
+    var NW : Network .
+    var T : Tran .
+    var K : Nat .
+    var MS : MovingStatus .
+    var S : Status .
+
+    rl [reforward1] :
+        (RPF: S)
+        (nw: (msg(B2D, CMD1) NW))
+        (tran: T) 
+        =>  (RPF: S)
+            (nw: (msg(D2E, CMD1) NW)) 
+            (tran: reforward(RPF)) .
+
+    rl [reforward2] :
+        (nw: (msg(E2D, CMD2) NW))
+        (tran: T) 
+        =>  (nw: (msg(D2B, CMD2) NW)) 
+            (tran: reforward(ELV)) .
+
+    rl [sendGoToElv] :
+        (RPF: r0e0) 
+        (RPF[GOTOELVSUCCESS]: false)
+        (msgCount[RPF]: 0) 
+        (nw: NW)
+        (tran: T) 
+        =>  (RPF: r0e0)
+            (msgCount[RPF]: 1) 
+            (RPF[GOTOELVSUCCESS]: false)
+            (nw: (msg(B2R, gotoelv) NW)) 
+            (tran: sendGoToElv(RPF)) .
+    
+    rl [recvGoToElv] : 
+        (ROB: robq0)
+        (RPF[GOTOELVSUCCESS]: false)
+        (movingStatus[ROB]: stay)
+        (nw: (msg(B2R, gotoelv) NW))
+        (tran: T) 
+        =>  (ROB: robq1)
+            (RPF[GOTOELVSUCCESS]: true)
+            (movingStatus[ROB]: moving)
+            (nw: NW) 
+            (tran: recvGoToElv(ROB)) .
+
+    rl [sendGoToElvCompleted] :
+        (ROB: robq1)
+        (movingStatus[ROB]: moving)
+        (RPF[GOTOELVCOMPLETED]: false)
+        (nw: NW)
+        (tran: T) 
+        =>  (ROB: robq1)
+            (movingStatus[ROB]: stay)
+            (RPF[GOTOELVCOMPLETED]: false)
+            (nw: (msg(R2B, gotoelvcompleted) NW))
+            (tran: sendGoToElvCompleted(ROB)) .
+
+    rl [recvGoToElvCompleted] :
+        (RPF: r0e0)
+        (msgCount[RPF]: 1)
+        (RPF[GOTOELVCOMPLETED]: false)
+        (nw: (msg(R2B, gotoelvcompleted) NW))
+        (tran: T)
+        =>  (RPF: r1e0)
+            (msgCount[RPF]: 0)
+            (RPF[GOTOELVCOMPLETED]: true)
+            (nw: NW)
+            (tran: recvGoToElvCompleted(RPF)) .
+
+    rl [sendInterlock1] : 
+        (RPF: r1e0)
+        (msgCount[RPF]: 0) 
+        (RPF[INTERLOCKTRUESUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r1e0)
+            (msgCount[RPF]: 1)
+            (RPF[INTERLOCKTRUESUCCESS]: false)
+            (nw: (msg(B2D, interlock1) NW))
+            (tran: sendInterlock1(RPF)) .
+
+    rl [recvInterlock1] :
+        (ELV: elvq0)
+        (nw: (msg(D2E, interlock1) NW))
+        (tran: T)
+        =>  (ELV: elvq1)
+            (nw: (msg(E2D, interlocksuccess1) NW))
+            (tran: recvInterlock1(ELV)) .
+
+    rl [recvinterlocksuccess1] :
+        (RPF: r1e0)
+        (msgCount[RPF]: 1)
+        (RPF[INTERLOCKTRUESUCCESS]: false)
+        (nw: (msg(D2B, interlocksuccess1) NW))
+        (tran: T)
+        =>  (RPF: calling)
+            (msgCount[RPF]: 0)
+            (RPF[INTERLOCKTRUESUCCESS]: true)
+            (nw: NW)
+            (tran: recvInterlockSuccess1(RPF)) .
+
+    rl [sendCalling] :
+        (RPF: calling)
+        (msgCount[RPF]: 0)
+        (RPF[CALLINGSUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: calling)
+            (msgCount[RPF]: 1)
+            (RPF[CALLINGSUCCESS]: false)
+            (nw: (msg(B2R, calling) NW))
+            (tran: sendCalling(RPF)) .
+    
+    rl [recvCalling] :
+        (ROB: robq1)
+        (movingStatus[ROB]: stay)
+        (nw: (msg(B2R, calling) NW))
+        (tran: T)
+        =>  (ROB: robq1)
+            (movingStatus[ROB]: stay)
+            (nw: (msg(R2B, callingsuccess) NW))
+            (tran: recvCalling(ROB)) .
+
+    rl [recvCallingsuccess] :
+        (RPF: calling)
+        (msgCount[RPF]: 1)
+        (RPF[CALLINGSUCCESS]: false)
+        (nw: (msg(R2B, callingsuccess) NW))
+        (tran: T)
+        =>  (RPF: r1e1)
+            (msgCount[RPF]: 0)
+            (RPF[CALLINGSUCCESS]: true)
+            (nw: NW)
+            (tran: recvCallingsuccess(RPF)) .
+
+    rl [sendCall] :
+        (RPF: r1e1)
+        (msgCount[RPF]: 0)
+        (RPF[CALLACCEPT]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r1e1)
+            (msgCount[RPF]: 1)
+            (RPF[CALLACCEPT]: false)
+            (nw: (msg(B2D, call) NW))
+            (tran: sendCall(RPF)) .
+
+    rl [recvCall] :
+        (ELV: elvq1)
+        (movingStatus[ELV]: stay)
+        (nw: (msg(D2E, call) NW))
+        (tran: T)
+        =>  (ELV: elvq2)
+            (movingStatus[ELV]: moving)
+            (nw: (msg(E2D, callsuccess) NW))
+            (tran: recvCall(ELV)) .
+
+    rl [recvCallSuccess] :
+        (RPF: r1e1)
+        (msgCount[RPF]: 1)
+        (RPF[CALLACCEPT]: false)
+        (nw: (msg(D2B, callsuccess) NW))
+        (tran: T)
+        =>  (RPF: r1e2)
+            (msgCount[RPF]: 0)
+            (RPF[CALLACCEPT]: true)
+            (nw: NW)
+            (tran: recvCallSuccess(RPF)) .
+        
+    rl [sendCallArrive] :
+        (ELV: elvq2)
+        (movingStatus[ELV]: moving)
+        (RPF[CALLARRIVE]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (ELV: elvq2)
+            (movingStatus[ELV]: stay)
+            (RPF[CALLARRIVE]: false)
+            (nw: (msg(E2D, callarrive) NW))
+            (tran: sendCallArrive(ELV)) .
+
+    rl [recvCallArrive] :
+        (RPF: r1e2)
+        (msgCount[RPF]: 0)
+        (RPF[CALLARRIVE]: false)
+        (nw: (msg(D2B, callarrive) NW))
+        (tran: T)
+        =>  (RPF: r1e3)
+            (msgCount[RPF]: 0)
+            (RPF[CALLARRIVE]: true)
+            (nw: NW)
+            (tran: recvCallArrive(RPF)) .
+
+    rl [sendOpen1] :
+        (RPF: r1e3)
+        (msgCount[RPF]: 0)
+        (RPF[OPENSUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r1e3)
+            (msgCount[RPF]: 1)
+            (RPF[OPENSUCCESS]: false)
+            (nw: (msg(B2D, open) NW))
+            (tran: sendOpen1(RPF)) .
+    
+    rl [recvOpen1] :
+        (ELV: elvq2)
+        (nw: (msg(D2E, open) NW))
+        (tran: T)
+        =>  (ELV: elvq3)
+            (nw: (msg(E2D, opensuccess) NW))
+            (tran: recvOpen1(ELV)) .
+    
+    rl [recvOpenSuccess1] :
+        (RPF: r1e3)
+        (msgCount[RPF]: 1)
+        (RPF[OPENSUCCESS]: false)
+        (nw: (msg(D2B, opensuccess) NW))
+        (tran: T)
+        =>  (RPF: r1e4)
+            (msgCount[RPF]: 0)
+            (RPF[OPENSUCCESS]: true)
+            (nw: NW)
+            (tran: recvOpenSuccess1(RPF)) . 
+
+    rl [sendGettingOn] :
+        (RPF: r1e4)
+        (msgCount[RPF]: 0)
+        (RPF[GETTINGONSUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r1e4)
+            (msgCount[RPF]: 1)
+            (RPF[GETTINGONSUCCESS]: false)
+            (nw: (msg(B2R, gettingon) NW))
+            (tran: sendGettingOn(RPF)) .
+    
+    rl [recvGettingOn] :
+        (ROB: robq1)
+        (movingStatus[ROB]: stay)
+        (RPF[GETTINGONSUCCESS]: false)
+        (nw: (msg(B2R, gettingon) NW))
+        (tran: T)
+        =>  (ROB: robq2)
+            (movingStatus[ROB]: moving)
+            (RPF[GETTINGONSUCCESS]: true)
+            (nw: NW)
+            (tran: recvGettingOn(ROB)) .
+    
+    rl [sendGettingOnCompleted] :
+        (ROB: robq2)
+        (movingStatus[ROB]: moving)
+        (RPF[GETTINGONCOMPLETED]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (ROB: robq2)
+            (movingStatus[ROB]: stay)
+            (RPF[GETTINGONCOMPLETED]: false)
+            (nw: (msg(R2B, gettingoncompleted) NW))
+            (tran: sendGettingOnCompleted(ROB)) .
+
+    rl [recvGettingOnCompleted] :
+        (RPF: r1e4)
+        (msgCount[RPF]: 1)
+        (RPF[GETTINGONCOMPLETED]: false)
+        (nw: (msg(R2B, gettingoncompleted) NW))
+        (tran: T)
+        =>  (RPF: r2e4)
+            (msgCount[RPF]: 0)
+            (RPF[GETTINGONCOMPLETED]: true)
+            (nw: NW)
+            (tran: recvGettingOnCompleted(RPF)) .
+
+    rl [sendClose1] :
+        (RPF: r2e4)
+        (msgCount[RPF]: 0)
+        (RPF[CLOSESUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r2e4)
+            (msgCount[RPF]: 1)
+            (RPF[CLOSESUCCESS]: false)
+            (nw: (msg(B2D, close) NW))
+            (tran: sendClose1(RPF)) .
+
+    rl [recvClose1] :
+        (ELV: elvq3)
+        (nw: (msg(D2E, close) NW))
+        (tran: T)
+        =>  (ELV: elvq4)
+            (nw: (msg(E2D, closesuccess) NW))
+            (tran: recvClose1(ELV)) .
+
+    rl [recvCloseSuccess1] :
+        (RPF: r2e4)
+        (msgCount[RPF]: 1)
+        (RPF[OPENSUCCESS]: true)
+        (RPF[CLOSESUCCESS]: false)
+        (nw: (msg(D2B, closesuccess) NW))
+        (tran: T)
+        =>  (RPF: r2e5)
+            (msgCount[RPF]: 0)
+            (RPF[OPENSUCCESS]: false)
+            (RPF[CLOSESUCCESS]: true)
+            (nw: NW)
+            (tran: recvCloseSuccess1(RPF)) .
+
+    rl [sendGo] :
+        (RPF: r2e5)
+        (msgCount[RPF]: 0)
+        (RPF[GOACCEPT]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r2e5)
+            (msgCount[RPF]: 1)
+            (RPF[GOACCEPT]: false)
+            (nw: (msg(B2D, go) NW))
+            (tran: sendGo(RPF)) .
+
+    rl [recvGo] :
+        (ELV: elvq4)
+        (movingStatus[ELV]: stay)
+        (nw: (msg(D2E, go) NW))
+        (tran: T)
+        =>  (ELV: elvq5)
+            (movingStatus[ELV]: moving)
+            (nw: (msg(E2D, gosuccess) NW))
+            (tran: recvGo(ELV)) .
+
+    rl [recvGoSuccess] :
+        (RPF: r2e5)
+        (msgCount[RPF]: 1)
+        (RPF[GOACCEPT]: false)
+        (nw: (msg(D2B, gosuccess) NW))
+        (tran: T)
+        =>  (RPF: r2e6)
+            (msgCount[RPF]: 0)
+            (RPF[GOACCEPT]: true)
+            (nw: NW)
+            (tran: recvGoSuccess(RPF)) .
+
+    rl [sendGoArrive] :
+        (ELV: elvq5)
+        (movingStatus[ELV]: moving)
+        (RPF[GOARRIVE]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (ELV: elvq5)
+            (movingStatus[ELV]: stay)
+            (RPF[GOARRIVE]: false)
+            (nw: (msg(E2D, goarrive) NW))
+            (tran: sendGoArrive(ELV)) .
+
+    rl [recvGoArrive] :
+        (RPF: r2e6)
+        (msgCount[RPF]: 0)
+        (RPF[GOARRIVE]: false)
+        (nw: (msg(D2B, goarrive) NW))
+        (tran: T)
+        =>  (RPF: r2e7)
+            (RPF[GOARRIVE]: true)
+            (msgCount[RPF]: 0)
+            (nw: NW)
+            (tran: recvGoArrive(RPF)) .
+
+    rl [sendOpen2] :
+        (RPF: r2e7)
+        (msgCount[RPF]: 0)
+        (RPF[OPENSUCCESS]: false)
+        (RPF[CLOSESUCCESS]: true)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r2e7)
+            (msgCount[RPF]: 1)
+            (RPF[OPENSUCCESS]: false)
+            (RPF[CLOSESUCCESS]: true)
+            (nw: (msg(B2D, open) NW))
+            (tran: sendOpen2(RPF)) .
+    
+    rl [recvOpen2] :
+        (ELV: elvq5)
+        (nw: (msg(D2E, open) NW))
+        (tran: T)
+        =>  (ELV: elvq6)
+            (nw: (msg(E2D, opensuccess) NW))
+            (tran: recvOpen2(ELV)) .
+
+    rl [recvOpenSuccess2] :
+        (RPF: r2e7)
+        (msgCount[RPF]: 1)
+        (RPF[OPENSUCCESS]: false)
+        (RPF[CLOSESUCCESS]: true)
+        (nw: (msg(D2B, opensuccess) NW))
+        (tran: T)
+        =>  (RPF: r2e8)
+            (msgCount[RPF]: 0)
+            (RPF[OPENSUCCESS]: true)
+            (RPF[CLOSESUCCESS]: false)
+            (nw: NW)
+            (tran: recvOpenSuccess2(RPF)) . 
+
+    rl [sendGettingOff] :
+        (RPF: r2e8)
+        (msgCount[RPF]: 0)
+        (nw: NW)
+        (RPF[GETTINGOFFSUCCESS]: false)
+        (tran: T)
+        =>  (RPF: r2e8)
+            (msgCount[RPF]: 1)
+            (RPF[GETTINGOFFSUCCESS]: false)
+            (nw: (msg(B2R, gettingoff) NW))
+            (tran: sendGettingOff(RPF)) .
+    
+    rl [recvGettingOff] :
+        (ROB: robq2)
+        (movingStatus[ROB]: stay)
+        (RPF[GETTINGOFFSUCCESS]: false)
+        (nw: (msg(B2R, gettingoff) NW))
+        (tran: T)
+        =>  (ROB: robq0)
+            (RPF[GETTINGOFFSUCCESS]: true)
+            (movingStatus[ROB]: moving)
+            (nw: NW)
+            (tran: recvGettingOff(ROB)) .
+    
+    rl [sendGettingOffCompleted] :
+        (ROB: robq0)
+        (movingStatus[ROB]: moving)
+        (RPF[GETTINGOFFCOMPLETED]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (ROB: robq0)
+            (movingStatus[ROB]: stay)
+            (RPF[GETTINGOFFCOMPLETED]: false)
+            (nw: (msg(R2B, gettingoffcompleted) NW))
+            (tran: sendGettingOffCompleted(ROB)) .
+
+    rl [recvGettingOffCompleted] :
+        (RPF: r2e8)
+        (msgCount[RPF]: 1)
+        (RPF[GETTINGOFFCOMPLETED]: false)
+        (nw: (msg(R2B, gettingoffcompleted) NW))
+        (tran: T)
+        =>  (RPF: r3e8)
+            (msgCount[RPF]: 0)
+            (RPF[GETTINGOFFCOMPLETED]: true)
+            (nw: NW)
+            (tran: recvGettingOffCompleted(RPF)) .
+
+    rl [sendClose2] :
+        (RPF: r3e8)
+        (msgCount[RPF]: 0)
+        (RPF[OPENSUCCESS]: true)
+        (RPF[CLOSESUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r3e8)
+            (msgCount[RPF]: 1)
+            (RPF[OPENSUCCESS]: true)
+            (RPF[CLOSESUCCESS]: false)
+            (nw: (msg(B2D, close) NW))
+            (tran: sendClose2(RPF)) .
+
+    rl [recvClose2] :
+        (ELV: elvq6)
+        (nw: (msg(D2E, close) NW))
+        (tran: T)
+        =>  (ELV: elvq7)
+            (nw: (msg(E2D, closesuccess) NW))
+            (tran: recvClose1(ELV)) .
+
+    rl [recvCloseSuccess2] :
+        (RPF: r3e8)
+        (msgCount[RPF]: 1)
+        (RPF[OPENSUCCESS]: true)
+        (RPF[CLOSESUCCESS]: false)
+        (nw: (msg(D2B, closesuccess) NW))
+        (tran: T)
+        =>  (RPF: r3e9)
+            (msgCount[RPF]: 0)
+            (RPF[OPENSUCCESS]: false)
+            (RPF[CLOSESUCCESS]: true)
+            (nw: NW)
+            (tran: recvCloseSuccess2(RPF)) .
+
+    rl [sendInterlock2] : 
+        (RPF: r3e9)
+        (msgCount[RPF]: 0) 
+        (RPF[INTERLOCKFALSESUCCESS]: false)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r3e9)
+            (msgCount[RPF]: 1)
+            (RPF[INTERLOCKFALSESUCCESS]: true)
+            (nw: (msg(B2D, interlock2) NW))
+            (tran: sendInterlock2(RPF)) .
+
+    rl [recvInterlock2] :
+        (ELV: elvq7)
+        (nw: (msg(D2E, interlock2) NW))
+        (tran: T)
+        =>  (ELV: elvq0)
+            (nw: (msg(E2D, interlocksuccess2) NW))
+            (tran: recvInterlock2(ELV)) .
+
+    rl [recvinterlocksuccess2] :
+        (RPF: r3e9)
+        (msgCount[RPF]: 1)
+        (nw: (msg(D2B, interlocksuccess2) NW))
+        (tran: T)
+        =>  (RPF: completed)
+            (msgCount[RPF]: 0)
+            (nw: NW)
+            (tran: recvInterlockSuccess2(RPF)) .
+
+    rl [init] :
+        (RPF: completed)
+        (msgCount[RPF]: K)
+        (RPF[GOTOELVSUCCESS]: true)
+        (RPF[GOTOELVCOMPLETED]: true)
+        (RPF[CALLINGSUCCESS]: true)
+        (RPF[INTERLOCKTRUESUCCESS]: true)
+        (RPF[OPENSUCCESS]: false)
+        (RPF[CALLACCEPT]: true)
+        (RPF[CALLARRIVE]: true)
+        (RPF[GETTINGONSUCCESS]: true)
+        (RPF[GETTINGONCOMPLETED]: true)
+        (RPF[CLOSESUCCESS]: true)
+        (RPF[GOACCEPT]: true)
+        (RPF[GOARRIVE]: true)
+        (RPF[GETTINGOFFSUCCESS]: true)
+        (RPF[GETTINGOFFCOMPLETED]: true)
+        (RPF[INTERLOCKFALSESUCCESS]: true)
+        (nw: NW)
+        (tran: T)
+        =>  (RPF: r0e0)
+            (RPF[GOTOELVSUCCESS]: false)
+            (RPF[GOTOELVCOMPLETED]: false)
+            (RPF[CALLINGSUCCESS]: false)
+            (RPF[INTERLOCKTRUESUCCESS]: false)
+            (RPF[OPENSUCCESS]: false)
+            (RPF[CALLACCEPT]: false)
+            (RPF[CALLARRIVE]: false)
+            (RPF[GETTINGONSUCCESS]: false)
+            (RPF[GETTINGONCOMPLETED]: false)
+            (RPF[CLOSESUCCESS]: false)
+            (RPF[GOACCEPT]: false)
+            (RPF[GOARRIVE]: false)
+            (RPF[GETTINGOFFSUCCESS]: false)
+            (RPF[GETTINGOFFCOMPLETED]: false)
+            (RPF[INTERLOCKFALSESUCCESS]: false)
+            (msgCount[RPF]: 0) 
+            (nw: NW)
+            (tran: init) .
+endm
+
+in model-checker .
+
+mod RCP-PROP is
+    pr RCP .
+    inc SATISFACTION .
+    subsort Config < State . 
+    op enabled : Tran -> Prop .
+    op applied : Tran -> Prop .
+    op wait : -> Prop .
+    op want : -> Prop .
+    op crit : -> Prop .
+    op leavecrit : -> Prop .
+    op goarrive : -> Prop .
+    
+    op inDrivingPermission1 : -> Prop .
+    op arrived1 : -> Prop .
+    op opened1 : -> Prop .
+    op closed1 : -> Prop .
+    op arrived2 : -> Prop .
+    op opened2 : -> Prop .
+    op closed2 : -> Prop .
+    op inDrivingPermission2 : -> Prop .
+    var S : Status .
+    var C : Config .
+    var PR : Prop .
+    var T : Tran .
+
+    eq (RPF: r0e0) C |= enabled(sendGoToElv(RPF)) = true .
+    eq (ROB: robq0) C |= enabled(recvGoToElv(ROB)) = true .
+    eq (ROB: robq1) C |= enabled(sendGoToElvCompleted(ROB)) = true .
+    eq (RPF: r0e0) C |= enabled(recvGoToElvCompleted(RPF)) = true .
+
+    eq (RPF: r1e0) C |= enabled(sendInterlock1(RPF)) = true .
+    eq (ELV: elvq0) C |= enabled(recvInterlock1(ELV)) = true .
+    eq (RPF: r1e0) C |= enabled(recvInterlockSuccess1(RPF)) = true .
+
+    eq (RPF: r1e1) C |= enabled(sendCall(RPF)) = true .
+    eq (ELV: elvq1) C |= enabled(recvCall(ELV)) = true .
+    eq (RPF: r1e1) C |= enabled(recvCallSuccess(RPF)) = true .
+
+    eq (ELV: elvq2) (movingStatus[ELV]: moving) C |= enabled(elvmoving1(ELV)) = true .
+
+    eq (ELV: elvq2) C |= enabled(sendCallArrive(ELV)) = true .
+    eq (RPF: r1e2) C |= enabled(recvCallArrive(RPF)) = true .
+
+    eq (RPF: r1e3) C |= enabled(sendOpen1(RPF)) = true .
+    eq (ELV: elvq2) C |= enabled(recvOpen1(ELV)) = true .
+    eq (RPF: r1e3) C |= enabled(recvOpenSuccess1(RPF)) = true .
+
+    eq (RPF: r1e4) C |= enabled(sendGettingOn(RPF)) = true .
+    eq (ROB: robq1) C |= enabled(recvGettingOn(ROB)) = true .
+    
+    eq (ROB: robq2) C |= enabled(sendGettingOnCompleted(ROB)) = true .
+    eq (RPF: r1e4) C |= enabled(recvGettingOnCompleted(RPF)) = true .
+
+    eq (RPF: r2e4) C |= enabled(sendClose1(RPF)) = true .
+    eq (ELV: elvq3) C |= enabled(recvClose1(ELV)) = true .
+    eq (RPF: r2e4) C |= enabled(recvCloseSuccess1(RPF)) = true .
+
+    eq (RPF: r2e5) C |= enabled(sendGo(RPF)) = true .
+    eq (ELV: elvq4) C |= enabled(recvGo(ELV)) = true .
+    eq (RPF: r2e5) C |= enabled(recvGoSuccess(RPF)) = true .
+
+    eq (ELV: elvq5) (movingStatus[ELV]: moving) C |= enabled(elvmoving2(ELV)) = true .
+
+    eq (ELV: elvq5) C |= enabled(sendGoArrive(ELV)) = true .
+    eq (RPF: r2e6) C |= enabled(recvGoArrive(RPF)) = true .
+
+    eq (RPF: r2e7) C |= enabled(sendOpen1(RPF)) = true .
+    eq (ELV: elvq5) C |= enabled(recvOpen2(ELV)) = true .
+    eq (RPF: r2e7) C |= enabled(recvOpenSuccess2(RPF)) = true .
+
+    eq (RPF: r2e8) C |= enabled(sendGettingOff(RPF)) = true .
+    eq (RPF: r2e8) C |= enabled(sendGettingOff(RPF)) = true .
+    eq (ROB: robq2) C |= enabled(recvGettingOff(ROB)) = true .
+
+    eq (ROB: robq0) C |= enabled(sendGettingOffCompleted(ROB)) = true .
+    eq (RPF: r2e8) C |= enabled(recvGettingOffCompleted(RPF)) = true .
+
+    eq (RPF: r3e8) C |= enabled(sendClose2(RPF)) = true .
+    eq (ELV: elvq6) C |= enabled(recvClose1(ELV)) = true .
+    eq (RPF: r3e8) C |= enabled(recvCloseSuccess2(RPF)) = true .
+
+    eq (RPF: r3e9) C |= enabled(sendInterlock2(RPF)) = true .
+    eq (ELV: elvq7) C |= enabled(recvInterlock2(ELV)) = true .
+    eq (RPF: r3e9) C |= enabled(recvInterlockSuccess2(RPF)) = true .
+
+    eq (tran: T) C |= applied(T) = true .
+
+    eq (RPF: r0e0) C |= want = true .
+    eq (RPF: completed) C |= goarrive = true .
+    eq (RPF: r1e0) (ROB: robq1) (ELV: elvq0 ) C |= wait = true .
+
+    eq C |= PR = false [owise] .
+endm
+
+mod RCP-FORMULA is
+    pr RCP-PROP .
+    pr INIT-CONFIG .
+    inc MODEL-CHECKER .
+    inc LTL-SIMPLIFIER .
+
+    ops liveness : -> Formula .
+    eq liveness = want |-> goarrive .
+endm
+
+eof
+
+search ic =>* C:Config .
+
+search ic =>! C:Config .
+
+red in RCP-FORMULA : modelCheck(ic,liveness) .

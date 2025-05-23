@@ -1,0 +1,47 @@
+attack_scenario:
+- scenario_name: null
+  target: null
+elevators:
+- door: close
+  floor: 9
+  inDrivingPermission: false
+  movingStatus: wJW4XLYfuB
+  name: elv1
+fuzzer:
+- bossim: false
+  elvsim: true
+  robsim: false
+  rpfsim: false
+protocol: MQTT
+service_robots:
+- floor: 11
+  name: bot0
+  position:
+  - 1470
+  - 1494
+  - 312
+- floor: 5
+  name: bot1
+  position:
+  - 1974
+  - 391
+  - 433
+- floor: 9
+  name: bot2
+  position:
+  - 397
+  - 958
+  - 779
+tasks:
+- task_floor: 10
+  task_name: schedule_work
+  task_no: 0
+- task_floor: 5
+  task_name: schedule_work
+  task_no: 1
+- task_floor: 11
+  task_name: 4D8C7zPKHipq
+  task_no: 2
+- task_floor: 10
+  task_name: schedule_work
+  task_no: 3
