@@ -1,0 +1,13 @@
+SBCSE v1.0
+----------
+* First public release of SBCSE, a smart building control system
+  emulation platform that makes it possible to conduct security
+  testing in connection with smart building control systems and
+  communication protocols. The following cyberattacks and corresponding
+  countermeasures are currently implemented:
+  - MITM: Man-in-the-Middle attack
+  - DDoS: Distributed Denial-of-Service attack
+  - BAC: Broken Access Control attack
+  In addition, the control protocol and its implementation were tested
+  via formal verification and fuzzing, and the necessary scripts are
+  also included in the release.
