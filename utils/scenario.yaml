@@ -1,0 +1,69 @@
+service_robots:
+  - name: rob1
+    floor: 2 
+    position: [0, 0, 0]
+  # - name: rob2
+  #   floor: 2
+  #   position: [0, 0, 0]
+  # - name: rob3
+  #   floor: 2
+  #   position: [0, 0, 0]
+  # - name: rob4
+  #   floor: 5
+  #   position: [0, 0, 0]
+  # - name: rob5
+  #   floor: 7
+  #   position: [0, 0, 0]
+  # - name: rob6
+  #   floor: 4
+  #   position: [0, 0, 0]
+
+tasks:
+  - task_no: 1
+    task_floor: 5
+    task_name: schedule_work
+  # - task_no: 2
+  #   task_floor: 8
+  #   task_name: schedule_work
+  # - task_no: 3
+  #   task_floor: 5
+  #   task_name: schedule_work
+  # - task_no: 4
+  #   task_floor: 2
+  #   task_name: schedule_work
+  # - task_no: 5
+  #   task_floor: 7
+  #   task_name: schedule_work
+  # - task_no: 6
+  #   task_floor: 8
+  #   task_name: schedule_work
+  # - task_no: 7
+  #   task_floor: 9
+  #   task_name: schedule_work
+  # - task_no: 8
+  #   task_floor: 10
+  #   task_name: schedule_work
+  # - task_no: 9
+  #   task_floor: 11
+  #   task_name: schedule_work
+  # - task_no: 10
+  #   task_floor: 7
+  #   task_name: schedule_work
+  # - task_no: 11
+  #   task_floor: 2
+  #   task_name: charge
+  
+elevators:
+  - name: elv
+    floor: 1
+    door: close               # close/open
+    movingStatus: stay        # stay/up/down
+    inDrivingPermission: False # AGV mode enable
+
+# att
+attack_scenario:
+  - scenario_name: None # None/MITM/BAC/DDOS
+    target: None # None/BOS/RPF/C/P
+
+protocol: MQTT  # MQTT/MQTTS
+sim_speed : 10
