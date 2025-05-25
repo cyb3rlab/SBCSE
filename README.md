@@ -23,6 +23,8 @@ SBCSE is implemented in Python, and several libraries must be installed before u
 ```bash
 pip install kivy
 pip install pyyaml
+pip install sqlalchemy
+pip install bcrypt
 ```
 
 In addition, an MQTT broker, such as Mosquitto, must be installed. For your reference, we provide detailed instructions for the case of macOS in the [MQTT setup documentation](docs/mqtt_setup.md).
