@@ -171,10 +171,6 @@ class Manager:
 
     def stop_server(self):
         self.stop_event.set()
-        # self.traffic_monitor.stop_monitoring()
-
-        if self.monitor_thread is not None:
-            self.monitor_thread.join()
 
         if self.rpf_sim.task_complete:
             self.elv_sim.stop_simulation()
