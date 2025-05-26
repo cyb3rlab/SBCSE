@@ -25,6 +25,9 @@ pip install kivy
 pip install pyyaml
 pip install sqlalchemy
 pip install bcrypt
+pip install psutil
+pip install numpy
+pip install scipy
 ```
 
 In addition, an MQTT broker, such as Mosquitto, must be installed. For your reference, we provide detailed instructions for the case of macOS in the [MQTT setup documentation](docs/mqtt_setup.md).
