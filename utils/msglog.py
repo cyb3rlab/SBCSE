@@ -10,8 +10,8 @@ Functions:
 import json
 import csv
 from datetime import datetime
-from utils.storyboard import LogConfig, RobotConfig, CmdConfig, MqttConfig,ELVConfig
-from utils.utils import clear_file, write_file, generate_file_path
+from utils.storyboard import LogConfig, RobotConfig, CmdConfig
+from utils.utils import write_file
 
 formatted_datetime = LogConfig.DATETIME
 

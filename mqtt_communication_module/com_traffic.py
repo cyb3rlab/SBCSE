@@ -1,9 +1,6 @@
-import psutil
 import time
 import csv
 from datetime import datetime
-# from scapy.all import sniff, Raw
-# from scapy.layers.inet import TCP
 from utils.storyboard import MqttConfig, LogConfig
 import paho.mqtt.client as mqtt
 from utils.msglog import log_traffic, log_connection

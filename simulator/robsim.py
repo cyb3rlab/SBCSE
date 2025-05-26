@@ -1,10 +1,8 @@
 import threading
-import sys
 from mqtt_communication_module.robmsghandler import RobMessageHandler
 from mqtt_communication_module.data_model import RobotData
-from utils.timesim import TimeSim
-from utils.storyboard import LogConfig, CmdConfig, ClientConfig, RobotConfig, ELVConfig, MqttConfig
-from utils.msglog import rob_position_log, rob_communication_log, action_log
+from utils.storyboard import LogConfig, CmdConfig, ClientConfig, RobotConfig, ELVConfig
+from utils.msglog import rob_position_log, action_log
 
 
 class RobotSimulator(object):

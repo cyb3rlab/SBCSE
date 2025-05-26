@@ -1,7 +1,5 @@
 import json
 import socket
-import paho.mqtt.client as mqtt
-from device_motion_module.elevator import Elevator
 from mqtt_communication_module.mqtt_msghandler import MessageHandler
 from mqtt_communication_module.data_model import RecvCommandData, ElvDtData, SendCommandData
 from utils.storyboard import LogConfig, MqttConfig, CmdConfig, ELVConfig, StateMachineConfig

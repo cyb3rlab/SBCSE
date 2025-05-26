@@ -59,7 +59,6 @@ class RCPMachine:
         while not self.stop:
             state_func = self.states.get(self.rcp_status)
             if state_func:
-                print(self.rob_name + " " + self.rcp_status, file=sys.stderr)
                 state_func()
             else:
                 raise ValueError(f"Invalid state: {self.rcp_status}")

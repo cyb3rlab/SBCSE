@@ -1,4 +1,3 @@
-import sys
 from utils.storyboard import MqttConfig, CmdConfig
 from mqtt_communication_module.elvmsghandler import ElvMessageHandler
 from utils.msglog import action_log

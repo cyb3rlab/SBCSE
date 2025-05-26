@@ -21,7 +21,7 @@ def write_file(file_path, content):
     with open(file_path, 'a')as F:
         F.write(content)
 
-def load_scenario(file_path, sim_speed, protocol, robs, tasks, elvs, scenario, rob_name, priority, time=None, fuzzer=None):
+def load_scenario(file_path, sim_speed, protocol, robs, tasks, elvs, scenario, rob_name, priority, time=None, fuzz_target=None):
     # Load yaml file
     with open(file_path, 'r') as f:
         scenario_data = yaml.safe_load(f)
@@ -35,7 +35,7 @@ def load_scenario(file_path, sim_speed, protocol, robs, tasks, elvs, scenario, r
     Sim_Speed = scenario_data.get(sim_speed, [])
     PROTOCOL = scenario_data.get(protocol, [])
     attck_scenario = scenario_data.get(scenario, [])
-    fuzzer_scenario = scenario_data.get(fuzzer, [])
+    FUZZING_SCENARIO = scenario_data.get(fuzz_target, [])
     SCENARIO_NAME = None
     TARGET = None
 
@@ -51,7 +51,7 @@ def load_scenario(file_path, sim_speed, protocol, robs, tasks, elvs, scenario, r
     for elv in ELV:
         elvhandler.add_elv(elv.name, elv)
 
-    return Sim_Speed, PROTOCOL, Rob, TASKS, ELV, SCENARIO_NAME, TARGET, fuzzer_scenario
+    return Sim_Speed, PROTOCOL, Rob, TASKS, ELV, SCENARIO_NAME, TARGET, FUZZING_SCENARIO
 
 def update_scenario(file_path, data):
     with open(file_path, 'w') as file:

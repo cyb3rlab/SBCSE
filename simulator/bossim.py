@@ -1,4 +1,3 @@
-import sys
 from mqtt_communication_module.bosmsghandler import BosMessageHandler
 from utils.storyboard import MqttConfig, ClientConfig, Mode
 from mqtt_communication_module.Authenticator.login_authen import Authenticator

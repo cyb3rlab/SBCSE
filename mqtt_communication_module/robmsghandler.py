@@ -1,11 +1,9 @@
 import json
 import socket
-import threading
-import paho.mqtt.client as mqtt
 from mqtt_communication_module.mqtt_msghandler import MessageHandler
 from mqtt_communication_module.data_model import RecvCommandData, RobotData
 from utils.storyboard import LogConfig, RobotConfig, CmdConfig, ELVConfig, MqttConfig
-from utils.msglog import rob_position_log, rob_communication_log, msg_log, log_id, action_log
+from utils.msglog import rob_communication_log, msg_log, log_id, action_log
 from formal_verification.FV import maude_class_monitor, maude_fnuc_monitor
 
 # @maude_class_monitor(PID='ROB', ocom_statuses=['recv_cmd'])

@@ -2,14 +2,14 @@ import sys
 import signal
 import atheris
 from threading import Thread, Event
-from mqtt_communication_module.data_model import set_run_parameters
-from utils.msglog import generate_runtime_report
-from utils.storyboard import MqttConfig, LogConfig, Mode, ScenarioConfig, CER, FuzzingConfig
 from utils.utils import load_scenario
+from utils.storyboard import MqttConfig, LogConfig, Mode, ScenarioConfig, CER, FuzzingConfig
 from utils.timesim import TimeSim
 from simulator import bossim
+from mqtt_communication_module.data_model import set_run_parameters
+from utils.msglog import generate_runtime_report
 from fuzzer.rpffuzzer import frpfsim, frpfsim2
-from fuzzer.bosfuzzer.fbossim import FBosSimulator
+from fuzzer.bosfuzzer import fbossim
 from fuzzer.robfuzzer import frobsim, frobsim2
 from fuzzer.elvfuzzer import felvsim, felvsim2
 from fuzzer.fuzzing_utils import get_seed, generate_scenario
@@ -44,7 +44,7 @@ class SBCSE():
         self.selected_protocol = None
         self.DosAtt = None
 
-        self.fuzzer = None
+        self.fuzz_target = None
 
         self.server_thread = None
         self.running = False
@@ -65,8 +65,8 @@ class SBCSE():
         # self.init_database()
 
     def setup_simulators(self):
-        if self.Rob is None and self.Tasks is None and self.ELV is None and self.ATT_scenario is None and self.target is None and self.selected_protocol is None and self.fuzzer is None:
-            Sim_Speed, PROTOCOL, Rob, TASKS, ELV, SCENARIO_NAME, TARGET, self.fuzzer = load_scenario(
+        if self.Rob is None and self.Tasks is None and self.ELV is None and self.ATT_scenario is None and self.target is None and self.selected_protocol is None and self.fuzz_target is None:
+            Sim_Speed, PROTOCOL, Rob, TASKS, ELV, SCENARIO_NAME, TARGET, self.fuzz_target = load_scenario(
                 'fuzzer/fuzzing_scenario.yaml',
             ScenarioConfig.Sim_Speed,
             ScenarioConfig.PROTOCOL,
@@ -77,7 +77,7 @@ class SBCSE():
             ScenarioConfig.Service_Robot_Name,
             ScenarioConfig.Service_Robot_PRIORITY,
             self.time,
-            ScenarioConfig.FUZZER
+            ScenarioConfig.FUZZ_TARGET
         )
 
             self.sim_speed = Sim_Speed
@@ -89,7 +89,8 @@ class SBCSE():
             self.selected_protocol = PROTOCOL
             # self.use_encryption = encryption
             self.time = TimeSim(self.sim_speed)
-
+            self.fuzz_target = self.fuzz_target[0]
+            
         if self.selected_protocol == MqttConfig.MQTT:
             self.port = MqttConfig.MQTT_PORT
         elif self.selected_protocol == MqttConfig.MQTTS:
@@ -110,24 +111,23 @@ class SBCSE():
         rob_send_topic = [MqttConfig.TOPIC_R2B, MqttConfig.TOPIC_ROB_DT]  # R2B/rob_dt
         rob_recv_topic = [MqttConfig.TOPIC_B2R, MqttConfig.TOPIC_B2R_FORWARD_ELV]  # B2R/RPF_F_elv_dt
 
-
         # instance
-        if self.fuzzer[0][FuzzingConfig.ELVSIM]:
+        if self.fuzz_target[FuzzingConfig.ELVSIM]:
             self.elv_sim = felvsim.FElevatorSimulator(elv_send_topic, elv_recv_topic, self.broker, self.port, self.ELV, self.time, None)
         else:
             self.elv_sim = felvsim2.FElevatorSimulator(elv_send_topic, elv_recv_topic, self.broker, self.port, self.ELV, self.time, None)
 
-        if self.fuzzer[0][FuzzingConfig.BOSSIM]:
-            self.bos_sim = FBosSimulator(bos_send_topic, bos_recv_topic, self.broker, self.port, self.time, CER.U_BOS, CER.PW_BOS, False, False)
+        if self.fuzz_target[FuzzingConfig.BOSSIM]:
+            self.bos_sim = fbossim.FBosSimulator(bos_send_topic, bos_recv_topic, self.broker, self.port, self.time, CER.U_BOS, CER.PW_BOS, False, False)
         else:
             self.bos_sim = bossim.BosSimulator(bos_send_topic, bos_recv_topic, self.broker, self.port, self.time, CER.U_BOS, CER.PW_BOS, False, False)
 
-        if self.fuzzer[0][FuzzingConfig.ROBSIM]:    
+        if self.fuzz_target[FuzzingConfig.ROBSIM]:    
             self.rob_sim = frobsim.FRobotSimulator(rob_send_topic, rob_recv_topic, self.broker, self.port, self.Rob, self.ELV, self.time, None)
         else:
             self.rob_sim = frobsim2.FRobotSimulator(rob_send_topic, rob_recv_topic, self.broker, self.port, self.Rob, self.ELV, self.time, None)
 
-        if self.fuzzer[0][FuzzingConfig.RPFSIM]:
+        if self.fuzz_target[FuzzingConfig.RPFSIM]:
             self.rpf_sim = frpfsim.FRPFSimulator(rpf_send_topic, rpf_recv_topic, self.broker, self.port, self.Tasks, self.time, CER.U_RPF, CER.PW_RPF, False, False)
         else:
             self.rpf_sim = frpfsim2.FRPFSimulator(rpf_send_topic, rpf_recv_topic, self.broker, self.port, self.Tasks, self.time, CER.U_RPF, CER.PW_RPF, False, False)
@@ -180,7 +180,7 @@ def signal_handler(signal, frame):
     exit()
 
 @atheris.instrument_func
-def Fuzzer(data:bytes):
+def Test(data):
     fdp = atheris.FuzzedDataProvider(data)
     if frpf:
         while not all(value is not None for value in frpf.handler.rob_dt_data_dict.values()):
@@ -212,19 +212,18 @@ def Fuzzer(data:bytes):
             pass
         while not frob.handler.is_fdp() and not frob.handler.stop_event.is_set():
             pass
-    print(data, file=sys.stderr)
 
 
-def Fuzzing(simulator, server_process):
+def Fuzzing(simulator, server_thread):
     try:
-        atheris.Setup(sys.argv, Fuzzer)
+        atheris.Setup(sys.argv, Test)
         atheris.Fuzz()
     except Exception as e:
         print('Exception:\n'+e, file=sys.stderr)
     finally:
         simulator.stop_server() 
-        server_process.join()
-        print('fuzzing stopped')
+        server_thread.join()
+        print('Fuzzing stopped')
 
 
 if __name__ == "__main__":
@@ -233,19 +232,19 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
     simulator = SBCSE()
     simulator.setup_simulators()
-    server_process = Thread(target=simulator.start_server)
-    server_process.start()
+    server_thread = Thread(target=simulator.start_server)
+    server_thread.start()
 
-    if simulator.fuzzer[0][FuzzingConfig.ELVSIM]:
+    if simulator.fuzz_target[FuzzingConfig.ELVSIM]:
         felv = simulator.elv_sim
-    if simulator.fuzzer[0][FuzzingConfig.BOSSIM]:
+    if simulator.fuzz_target[FuzzingConfig.BOSSIM]:
         fbos = simulator.bos_sim
-    if simulator.fuzzer[0][FuzzingConfig.RPFSIM]:
+    if simulator.fuzz_target[FuzzingConfig.RPFSIM]:
         frpf = simulator.rpf_sim
         while not frpf.initialized:
             pass
-    if simulator.fuzzer[0][FuzzingConfig.ROBSIM]:
+    if simulator.fuzz_target[FuzzingConfig.ROBSIM]:
         frob = simulator.rob_sim        
     while not simulator.running:
         pass
-    Fuzzing(simulator, server_process)
+    Fuzzing(simulator, server_thread)

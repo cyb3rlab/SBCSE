@@ -1,7 +1,5 @@
 from utils.storyboard import StateMachineConfig as S
 from utils.storyboard import MqttConfig, ClientConfig, ScenarioConfig, Mode, LogConfig
-from mqtt_communication_module.rpfmsghandler import RpfMessageHandler
-from mqtt_communication_module.bosmsghandler import BosMessageHandler
 from utils.msglog import log_att_process
 
 

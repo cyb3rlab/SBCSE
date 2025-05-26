@@ -10,7 +10,7 @@ fuzzing_scenario = {
     ScenarioConfig.Elevators: [],
     ScenarioConfig.ATT_SCENARIO: [{ScenarioConfig.SCENARIO_NAME: None, ScenarioConfig.TARGET: None}],
     ScenarioConfig.PROTOCOL: MqttConfig.MQTT,
-    ScenarioConfig.FUZZER:[],
+    ScenarioConfig.FUZZ_TARGET:[],
     ScenarioConfig.Sim_Speed: 1
     }
 
@@ -55,7 +55,7 @@ def scenario_data(seed):
     values = [False] * 4
     index = random.randint(0, 3)
     values[index] = True
-    fuzzing_scenario[ScenarioConfig.FUZZER].append({
+    fuzzing_scenario[ScenarioConfig.FUZZ_TARGET].append({
         FuzzingConfig.ELVSIM: values[0],
         FuzzingConfig.BOSSIM: values[1],
         FuzzingConfig.RPFSIM: values[2],

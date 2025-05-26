@@ -444,7 +444,7 @@ class ScenarioConfig:
 
     protocol = ["MQTT", "MQTTS"]
 
-    FUZZER = 'fuzzer'
+    FUZZ_TARGET = 'fuzz_target'
 
 
 

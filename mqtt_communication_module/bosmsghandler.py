@@ -1,7 +1,4 @@
-import subprocess
-import os
 import socket
-import signal
 from mqtt_communication_module.data_model import SendCommandData, RecvCommandData, ElvDtData
 from mqtt_communication_module.mqtt_msghandler import MessageHandler
 from utils.storyboard import LogConfig, CmdConfig, ELVConfig, Mode, MqttConfig
