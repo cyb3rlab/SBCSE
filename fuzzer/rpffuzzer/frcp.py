@@ -116,11 +116,9 @@ class RCPMachine:
         while retries < max_retries:
             if self.check_success(ELV.INTERLOCK_FALSE_SUCCESS):
                 self.handler.robothandler.pop()
-                # self.stop = True
                 self.rcp_status = S.COMPLETED
                 self.rob.copy_bot(self.rob_name)
                 self.elv.copy_elv()
-                # self.init_rcp_status()
                 return
             else:
                 self.handler.send_interlock_command(False)
@@ -318,7 +316,6 @@ class RCPMachine:
                     self.handler.robothandler.enqueue(self.rob_name)
                     return
                 else:
-                    # self.print_reason_and_retry()
                     retries += 1
             else:
                 self.handler.send_B2R_command(command=R.GO_TO_ELV, status=R.WAIT, rob_name=self.rob_name)

@@ -103,9 +103,7 @@ class RCPMachine:
         while self.retries < max_retries and not self.stop:
             if self.check_success(ELV.INTERLOCK_FALSE_SUCCESS):
                 self.handler.robothandler.pop()
-                # self.stop = True
                 self.rcp_status = S.COMPLETED
-                # self.init_rcp_status()
                 return
             else:
                 self.handler.send_interlock_command(False)
@@ -126,7 +124,6 @@ class RCPMachine:
                 direction = self.compute_direction(current_floor=self.handler.elv_current_floor,
                                                 target_floor=self.handler.rob_dt_data_dict[self.rob_name][R.FLOOR])
                 self.handler.send_call_command(self.handler.rob_dt_data_dict[self.rob_name][R.FLOOR], direction)
-                # self.retries += 0.05
                 self.retries += 1
         self.exit()
 
