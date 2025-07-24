@@ -9,5 +9,5 @@ class FRPFMsgHandler(RpfMessageHandler):
     def __init__(self, send_topic, recv_topic, broker, port, time):
         super().__init__(send_topic, recv_topic, broker, port, time)
         self.mode_handlers = {
-            Mode.FUZZING: FRpfNormalMode2(self),
+            Mode.FUZZING2: FRpfNormalMode2(self),
         }
