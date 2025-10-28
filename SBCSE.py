@@ -17,13 +17,13 @@ from mqtt_communication_module.cpu_monitor import MonitorCPU
 class Manager:
     def __init__(self):
         # create TimeSim instance
-        self.sim_speed = 10  # default
+        self.sim_speed = 1  # default
         self.time = TimeSim(self.sim_speed)
         self.task = []
         self.broker = MqttConfig.MQTT_BROKER
         self.port = MqttConfig.MQTT_PORT
         # self.port = None
-        self.mqtts_listen = MqttConfig.MQTTS_PORT
+        # self.mqtts_listen = MqttConfig.MQTTS_PORT
         self.runtime_log_file = LogConfig.RUNTIME_REPORT
         self.mqtt_client = None
         self.message_handler = None
@@ -84,7 +84,8 @@ class Manager:
             self.target = TARGET
             self.selected_protocol = PROTOCOL
             # self.use_encryption = encryption
-            self.time = TimeSim(self.sim_speed)
+            # self.time = TimeSim(self.sim_speed)
+            self.time.time_scale = self.sim_speed
 
         # set port
         if self.selected_protocol == MqttConfig.MQTT:
@@ -115,14 +116,40 @@ class Manager:
 
 
         # change scenario
+        # if self.ATT_scenario:
+        #     self.bos_mode, self.rpf_mode = switch_mode(self.ATT_scenario, self.target, self.selected_protocol, self.use_encryption)
+        #     # print(f"---BOS:{self.bos_mode}, RPF:{self.rpf_mode}")
+        #     self.bos_mode = self.bos_mode if self.bos_mode else Mode.Normal
+        #     self.rpf_mode = self.rpf_mode if self.rpf_mode else Mode.Normal
+        #
+        #     self.bos_sim.handler.set_mode(self.bos_mode)
+        #     self.rpf_sim.handler.set_mode(self.rpf_mode)
+        # change scenario -- wrapped for safety so attack failures won't crash manager
         if self.ATT_scenario:
-            self.bos_mode, self.rpf_mode = switch_mode(self.ATT_scenario, self.target, self.selected_protocol, self.use_encryption)
-            # print(f"---BOS:{self.bos_mode}, RPF:{self.rpf_mode}")
+            try:
+                self.bos_mode, self.rpf_mode = switch_mode(self.ATT_scenario, self.target, self.selected_protocol,
+                                                           self.use_encryption)
+            except Exception as e:
+                print(f"[Manager] switch_mode raised exception: {e}. Falling back to Normal mode.")
+                # fallback
+                self.bos_mode, self.rpf_mode = Mode.Normal, Mode.Normal
+
+            # ensure defaults
             self.bos_mode = self.bos_mode if self.bos_mode else Mode.Normal
             self.rpf_mode = self.rpf_mode if self.rpf_mode else Mode.Normal
 
-            self.bos_sim.handler.set_mode(self.bos_mode)
-            self.rpf_sim.handler.set_mode(self.rpf_mode)
+            # set handler modes safely (check attribute exists)
+            try:
+                if hasattr(self.bos_sim, "handler") and hasattr(self.bos_sim.handler, "set_mode"):
+                    self.bos_sim.handler.set_mode(self.bos_mode)
+            except Exception as e:
+                print(f"[Manager] Failed to set BOS mode: {e}")
+
+            try:
+                if hasattr(self.rpf_sim, "handler") and hasattr(self.rpf_sim.handler, "set_mode"):
+                    self.rpf_sim.handler.set_mode(self.rpf_mode)
+            except Exception as e:
+                print(f"[Manager] Failed to set RPF mode: {e}")
 
         if self.ATT_scenario == 'DDOS':
             self.DosAtt = True
