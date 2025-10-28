@@ -76,7 +76,10 @@ class RpfSimulator:
 
     def stop_simulation(self):
         for rob_name in self.robothandler.rob_dict.keys():
-            self.robothandler.rob_dict[rob_name]['rcp_state_machine'].rcp_status = StateMachineConfig.COMPLETED
+            sm = self.robothandler.rob_dict[rob_name].get('rcp_state_machine')
+            if sm is not None:
+                sm.rcp_status = StateMachineConfig.COMPLETED
+            # self.robothandler.rob_dict[rob_name]['rcp_state_machine'].rcp_status = StateMachineConfig.COMPLETED
         if self.running:
             self.running = False
             self.client.loop_stop()

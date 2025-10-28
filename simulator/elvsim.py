@@ -17,6 +17,7 @@ class ElevatorSimulator:
         self.client = self.handler.client
         self.client.on_connect = self.handler.on_connect
         self.client.on_message = self.handler.fm_message
+        # self.client.on_message = self.handler.on_message
 
     def init(self):
         self.handler.cmd_list = []

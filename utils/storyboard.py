@@ -48,13 +48,6 @@ class MqttConfig:
     # ALLOWLIST = ["127.0.0.1", "::1"]
     ALLOWLIST = ["192.168.0.102"]
 
-    # client_ip = {
-    #     "BOS": "192.168.0.102",
-    #     "RPF": "192.168.0.102",
-    #     "ELV": "192.168.0.102",
-    #     "ROB": "192.168.0.102",
-    #     "bot": "192.168.1.101",
-    # }
     client_ip = {
         "BOS": "127.0.0.1",
         "RPF": "127.0.0.1",
@@ -64,9 +57,9 @@ class MqttConfig:
     }
 
     # Need to switch to path
-    CA = "mqtt_communication_module/certs/ca.crt"
-    CRT = "mqtt_communication_module/certs/client.crt"
-    KEY = "mqtt_communication_module/certs/client.key"
+    CA = "mqtt_communication_module/certs/mqtt_certs/ca.crt"
+    CRT = "mqtt_communication_module/certs/mqtt_certs/client.crt"
+    KEY = "mqtt_communication_module/certs/mqtt_certs/client.key"
 
     PUBLISHER_USERNAME = None
     PUBLISHER_PASSWORD = None
@@ -135,6 +128,9 @@ class LogConfig:
     FILE_ROB_POSITION_LOG = os.path.join(Generate_DIR, '%s_position.txt')
     FILE_ELV_ACT_LOG = os.path.join(Generate_DIR, '%s_elv_act.txt')
     FILE_ROB_ACT_LOG = os.path.join(Generate_DIR, '%s_rob_act.txt')
+    FILE_NETWORK_DISTURBANCE = os.path.join(Generate_DIR, 'network_disturbance.csv')
+    FILE_NETWORK_RUNTIME_REPORT = os.path.join(Generate_DIR, 'network_runtimereport.csv')
+    FILE_NETWORK_DELAY_LIMIT = os.path.join(Generate_DIR, 'network_delay_limit_results.csv')
 
 
     # datetime format
@@ -325,6 +321,7 @@ class CmdConfig:
     INTERLOCK = "interlock"
     INTERLOCK_TRUE = "interlock_true"
     INTERLOCK_FALSE = "interlock_false"
+
     CALL = "call"
     OPEN = "open"
     CLOSE = "close"
@@ -351,6 +348,7 @@ class CmdConfig:
     NOT_COMPLETED = "not_completed"
     RESULT = "result"
     REASON = "reason"
+    LOCK_STATE = "lock_state"
 
     # command execution status
     GO_TO_ELV_SUCCESS = 'GoToELV_success'

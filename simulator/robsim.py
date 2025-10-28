@@ -23,6 +23,7 @@ class RobotSimulator(object):
         self.handler.enable_allowlist = enable_allowlist
         self.client = self.handler.client
         self.client.on_connect = self.handler.on_connect
+        # self.client.on_message = self.handler.on_message
         self.client.on_message = self.handler.fm_message
 
         self.communication_file_name = LogConfig.FILE_ROB_JP_LOG

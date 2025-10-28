@@ -66,4 +66,4 @@ attack_scenario:
     target: None # None/BOS/RPF/C/P
 
 protocol: MQTT  # MQTT/MQTTS
-sim_speed : 10
+sim_speed : 1
