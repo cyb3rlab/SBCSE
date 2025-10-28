@@ -37,18 +37,30 @@ class MITMAttackScenario:
         print(f"->Listening on target:{self.target}")
         msg = f"->Listening on target:{self.target}............"
         log_att_process(self.file_path, msg)
-        if self.target_protocol == MqttConfig.MQTTS:
-            print("+++++++++++++++++++++++++++Listening failed(Secure connection)")
-            msg = "+++++++++++++++++++++++++++Listening failed(Secure connection)"
-            log_att_process(self.file_path, msg)
+        try:
+            if self.target_protocol == MqttConfig.MQTTS:
+                print("+++++++++++++++++++++++++++Listening failed(Secure connection)")
+                msg = "+++++++++++++++++++++++++++Listening failed(Secure connection)"
+                log_att_process(self.file_path, msg)
+                self.success = False
+                self.current_state = None
+                print("->Attack failed, system will run in Normal mode")
+                log_att_process(self.file_path, "->Attack failed")
+                return
+            else:
+                print(f"->Listening success on {self.target}, continuing attack.......")
+                msg = f"->Listening success on {self.target}, continuing attack......."
+                log_att_process(self.file_path, msg)
+                self.success = True
+                self.current_state = S.A2
+        except Exception as e:
+            print(f"->Exception during listen: {e}")
+            log_att_process(self.file_path, f"->Exception during listen: {e}")
             self.success = False
             self.current_state = None
-        else:
-            print(f"->Listening success on {self.target}, continuing attack.......")
-            msg = f"->Listening success on {self.target}, continuing attack......."
-            log_att_process(self.file_path, msg)
-            self.success = True
-            self.current_state = S.A2
+            print("->Attack failed, system will run in Normal mode")
+            log_att_process(self.file_path, "->Attack failed, system will run in Normal mode")
+            return
 
     def intercept(self):
         # intercept msg
