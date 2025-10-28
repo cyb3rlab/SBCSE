@@ -18,7 +18,7 @@ class RCPMachine:
         self.reopen_retries = 0
         self.rcp_status = S.r0e0
         self.rob_name = rob_name
-        self.state_transitions = S.STATE_MAP
+        # self.state_transitions = S.STATE_MAP
         self.target_floor = None  
         self.stop = False
 

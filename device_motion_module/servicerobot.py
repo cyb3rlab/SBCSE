@@ -11,7 +11,7 @@ from formal_verification.FV import maude_class_monitor
 
 # @maude_class_monitor(PID='ROB', ocom_statuses=['state', 'movingStatus'])
 class ServiceRobot():
-    def __init__(self, robot_data, time=None, mode=False):
+    def __init__(self, robot_data, time=None, mode=True):
         self.time = time
         self.name = robot_data[RobotConfig.NAME]
         self.position = [0, 0, 0] if not robot_data.get(RobotConfig.POSITION) else robot_data[RobotConfig.POSITION]
@@ -256,7 +256,7 @@ class ServiceRobot():
             self.update_config_status()
             if self.elv_door_status == ELVConfig.OPEN:
                 if not self.simulating_entry:
-                    if current_time - self.last_action_function_time >= RobotConfig.ELV_GETTING_ON_TIME:
+                    if current_time - self.last_action_function_time >= RobotConfig.ELV_GETTING_OFF_TIME:
                         self.status = RobotConfig.STATUS_0
                         self.floor = self.next_floor
                         self.map_no = self.floormap(self.next_floor)
