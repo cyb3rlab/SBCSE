@@ -176,33 +176,40 @@ class RpfMessageHandler(MessageHandler):
         data = self.b2r_data_instance.B2R_command(target_floor=target_floor, command=command, status=status, rob_name=rob_name)
         self.send(data, topic=self.send_B2R, time_sim=self.time, file_path=self.robothandler.get_rpf_rob_comfile(rob_name))
 
-    def check_command(self, command, result, rob_name=None):
-        success_attr = f"{command}_{result}"
+    def check_command(self, command, result, lock_state=False, rob_name=None):
+        if lock_state:
+            success_attr = f"{command}_{lock_state}_{result}"
+        else:
+            success_attr = f"{command}_{result}"
+        if rob_name is None:
+            rob_name = next(iter(self.rob_status_dict))          
         if result in [CmdConfig.SUCCESS, CmdConfig.ACCEPT, CmdConfig.ARRIVE, CmdConfig.COMPLETED]:
             # Set the attribute based on the result
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][success_attr] = True
-
+            self.rob_status_dict[rob_name][success_attr] = True
         if command == CmdConfig.OPEN and result == CmdConfig.SUCCESS:
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][ELVConfig.CLOSE_SUCCESS] = False
+            self.rob_status_dict[rob_name][ELVConfig.CLOSE_SUCCESS] = False
         elif command == CmdConfig.CLOSE and result == CmdConfig.SUCCESS:
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][ELVConfig.OPEN_SUCCESS] = False
+            self.rob_status_dict[rob_name][ELVConfig.OPEN_SUCCESS] = False
         if command == CmdConfig.GETTING_ON and result == CmdConfig.SUCCESS:
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_OFF_SUCCESS] = False
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_OFF_COMPLETED] = False
+            self.rob_status_dict[rob_name][CmdConfig.GETTING_OFF_SUCCESS] = False
+            self.rob_status_dict[rob_name][CmdConfig.GETTING_OFF_COMPLETED] = False
         elif command == CmdConfig.GETTING_OFF and result == CmdConfig.SUCCESS:
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_ON_SUCCESS] = False
-            self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_ON_COMPLETED] = False
+            self.rob_status_dict[rob_name][CmdConfig.GETTING_ON_SUCCESS] = False
+            self.rob_status_dict[rob_name][CmdConfig.GETTING_ON_COMPLETED] = False
 
         elif command == CmdConfig.GETTING_OFF:
             if result == CmdConfig.SUCCESS:
-                self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_ON_SUCCESS] = False
+                self.rob_status_dict[rob_name][CmdConfig.GETTING_ON_SUCCESS] = False
             elif result == CmdConfig.COMPLETED:
-                self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_ON_COMPLETED] = False
+                self.rob_status_dict[rob_name][CmdConfig.GETTING_ON_COMPLETED] = False
             elif result == CmdConfig.NOT_COMPLETED:
-                self.rob_status_dict[next(iter(self.rob_dt_data_dict))][CmdConfig.GETTING_OFF_COMPLETED] = False
+                self.rob_status_dict[rob_name][CmdConfig.GETTING_OFF_COMPLETED] = False
 
-    def mf_check_command(self, command, result, rob_name=None):
-        success_attr = f"{command}_{result}"
+    def mf_check_command(self, command, result, lock_state=False, rob_name=None):
+        if lock_state:
+            success_attr = f"{command}_{lock_state}_{result}"
+        else:
+            success_attr = f"{command}_{result}"
         if rob_name:
             if not command:
                 return
@@ -261,6 +268,7 @@ class RpfMessageHandler(MessageHandler):
         try:
             payload = json.loads(msg.payload)
             command = payload.get(CmdConfig.COMMAND)
+            lock_state = payload.get(CmdConfig.LOCK_STATE)
             result = payload.get(CmdConfig.RESULT)
             reason = payload.get(CmdConfig.REASON)
             rob_name = payload.get(RobotConfig.NAME)
@@ -287,8 +295,7 @@ class RpfMessageHandler(MessageHandler):
                     RobotConfig.ELV_PREPARATION: payload[RobotConfig.ELV_PREPARATION]
                 }})
                 msg_log(msg.topic, payload, self.time, self.robothandler.get_rpf_rob_comfile(rob_name))
-
-            self.check_command(command, result, rob_name)
+            self.check_command(command, result, lock_state, rob_name)
             self.forward_message(msg.topic, payload)
             if result == 'not_completed':
                 self.rob_error_solver(rob_name, reason)

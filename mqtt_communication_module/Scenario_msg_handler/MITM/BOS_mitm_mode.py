@@ -43,13 +43,13 @@ class BOSMitmMode(BOS_ModeHandler):
                 # self.recv_command_response(command)
 
                 if command == CmdConfig.INTERLOCK:
-                    self.interlock_success = True
+                    self.bos_handler.interlock_success = True
                 elif command == CmdConfig.CALL:
-                    self.call_accept = True
+                    self.bos_handler.call_accept = True
                 elif command == CmdConfig.OPEN:
-                    self.open_success = True
+                    self.bos_handler.open_success = True
                 elif command == CmdConfig.CLOSE:
-                    self.close_success = True
+                    self.bos_handler.close_success = True
                 elif command == CmdConfig.GO:
-                    self.go_accept = True
+                    self.bos_handler.go_accept = True
                 self.bos_handler.forward_message(msg.topic, payload)

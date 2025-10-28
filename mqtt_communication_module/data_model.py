@@ -115,7 +115,8 @@ class RecvCommandData:
     def interlock_true_command_success(self):
         back_data = {
             "sessionId": self.session_id,
-            "command": 'interlock_true',
+            "command": 'interlock',
+            "lock_state": 'true',
             "result": 'success'
         }
         return back_data
@@ -123,7 +124,8 @@ class RecvCommandData:
     def interlock_false_command_success(self):
         back_data = {
             "sessionId": self.session_id,
-            "command": 'interlock_false',
+            "command": 'interlock',
+            "lock_state": 'false',
             "result": 'success'
         }
         return back_data

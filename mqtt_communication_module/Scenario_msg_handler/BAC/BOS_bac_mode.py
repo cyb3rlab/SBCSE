@@ -37,8 +37,7 @@ class BOSBacMode(BOS_ModeHandler):
                 # self.observe_dt_status(self.time)
                 command = payload.get(CmdConfig.COMMAND)
                 # self.recv_command_response(command)
-
-                if command == CmdConfig.INTERLOCK_TRUE:
+                if command == CmdConfig.INTERLOCK:
                     self.bos_handler.interlock_success = True
                     self.bos_handler.forward_message(msg.topic, payload)
                 elif command == CmdConfig.CALL:

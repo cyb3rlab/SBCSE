@@ -129,7 +129,6 @@ class ElvMessageHandler(MessageHandler):
                         self.recv_command_response(CmdConfig.INTERLOCK_TRUE, CmdConfig.SUCCESS)
                     else:
                         self.recv_command_response(CmdConfig.INTERLOCK_FALSE, CmdConfig.SUCCESS)
-                    
 
             elif command == CmdConfig.CALL:
                 self.recv_command_response(CmdConfig.CALL, CmdConfig.ACCEPT)
