@@ -709,6 +709,11 @@ mod RCP-PROP is
     op closed2 : -> Prop .
     op inDrivingPermission2 : -> Prop .
     op robarrive : -> Prop .
+
+    op closed : -> Prop .
+    op gettingon : -> Prop .
+    op gettingoff : -> Prop .
+
     var S : Status .
     var C : Config .
     var PR : Prop .
@@ -795,6 +800,14 @@ mod RCP-PROP is
     eq (RPF: r2e8) C |= crit = true .
     eq (RPF: r3e8) C |= crit = true .
 
+    eq (ELV: elvq0 ) C |= closed = true .
+    eq (ELV: elvq1 ) C |= closed = true .
+    eq (ELV: elvq2 ) C |= closed = true .
+    eq (ELV: elvq4 ) C |= closed = true .
+    eq (ELV: elvq5 ) C |= closed = true .
+    eq (ELV: elvq7 ) C |= closed = true .
+    eq (RPF: r1e4) (ROB: robq2 ) C |= gettingon = true .
+    eq (RPF: r2e8) (ROB: robq0 ) C |= gettingoff = true .
 
     eq C |= PR = false [owise] .
 endm
@@ -817,6 +830,11 @@ mod RCP-FORMULA is
     eq wf(T) = (<> [] enabled(T)) -> ([] <> applied(T)) .
     eq sf(T) = ([] <> enabled(T)) -> (<> [] applied(T)) .
 
+    eq safety = [] ( 
+        ~(closed /\ gettingon) /\ 
+        ~(closed /\ gettingoff) 
+        ) .
+
     eq fair6 = sf(recvOpen12(ELV)) .
     eq fair12 = sf(recvOpen22(ELV)) .
     eq liveness = want |-> robarrive .
@@ -828,6 +846,8 @@ eof
 search ic =>* C:Config .
 
 search ic =>! C:Config .
+
+red in RCP-FORMULA : modelCheck(ic, safety) .
 
 red in RCP-FORMULA : modelCheck(ic, liveness) .
 

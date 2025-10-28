@@ -25,6 +25,7 @@ class FRPFMsgHandler(RpfMessageHandler):
                                          self.send_data_instance.go_command(target_floor)])
         return data
 
+
     def send_interlock_command(self, value):
         data = self.send_ELV_command_data()
         self.send(data, topic=self.send_B2D, time_sim=self.time, file_path=self.rpf_log_file)
@@ -35,6 +36,7 @@ class FRPFMsgHandler(RpfMessageHandler):
         data = self.send_ELV_command_data()
         self.send(data, topic=self.send_B2D, time_sim=self.time, file_path=self.rpf_log_file)
         print(data, file=sys.stderr)
+
 
     def send_open_command(self):
         data = self.send_ELV_command_data()
@@ -52,6 +54,7 @@ class FRPFMsgHandler(RpfMessageHandler):
         data = self.send_ELV_command_data()
         self.send(data, topic=self.send_B2D, time_sim=self.time, file_path=self.rpf_log_file)
         print(data, file=sys.stderr)
+
 
     def send_B2R_command(self, target_floor=None, command=None, status=None, rob_name=None):
         if self.fdp == None:

@@ -11,7 +11,7 @@ from utils.storyboard import CmdConfig, ClientConfig, RobotConfig, ELVConfig
 from utils.msglog import rob_position_log, action_log
 
 
-class FRobotSimulator(object):
+class FRobotSimulator:
     def __init__(self, send_topic, recv_topic, broker, port, robs, elvs, time, enable_allowlist):
         self.time = time
         self.Robs = RobotHandler()
