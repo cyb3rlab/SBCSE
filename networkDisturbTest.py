@@ -87,8 +87,8 @@ class Manager:
             self.selected_protocol = PROTOCOL
             # self.use_encryption = encryption
             # self.time = TimeSim(self.sim_speed)
-            self.time.time_scale = self.sim_speed
-            # self.time = external_timesim if external_timesim else TimeSim(self.sim_speed)
+            # self.time.time_scale = self.sim_speed
+            self.time = external_timesim if external_timesim else TimeSim(self.sim_speed)
 
         # set port
         if self.selected_protocol == MqttConfig.MQTT:
@@ -211,9 +211,9 @@ class Manager:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--packet_loss", type=float, default=0.001)
-    parser.add_argument("--delay_min", type=float, default=0.1)
-    parser.add_argument("--delay_max", type=float, default=1.6)
-    parser.add_argument("--delay_chance", type=float, default=0.95)
+    parser.add_argument("--delay_min", type=float, default=1.5)
+    parser.add_argument("--delay_max", type=float, default=1.5)
+    parser.add_argument("--delay_chance", type=float, default=1)
     args = parser.parse_args()
 
     Sim_Speed, _, _, _, _, _, _, _ = load_scenario(
