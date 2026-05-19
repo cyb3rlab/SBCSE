@@ -1,5 +1,5 @@
-import time
-import csv
+import numpy as np
+import csv, json, time
 from datetime import datetime
 from utils.storyboard import MqttConfig, LogConfig
 import paho.mqtt.client as mqtt
@@ -58,32 +58,57 @@ class MQTTBrokerMonitor:
         self.broker_port = broker_port
         self.data_file = data_file
         self.interval = interval
+
         self.client = mqtt.Client()
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
+
+        # message counters
         self.last_received = 0
         self.last_sent = 0
+
+        # byte counters
+        self.last_bytes_received = 0
+        self.last_bytes_sent = 0
         self.last_stats = {}
+
+        # for throughput
+        self.prev_sent = None
+        self.prev_received = None
+        self.prev_bytes_sent = None
+        self.prev_bytes_received = None
+        self.prev_time = None
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             print("Connected to MQTT Broker successfully")
+            # message counts
             client.subscribe("$SYS/broker/messages/sent")
             client.subscribe("$SYS/broker/messages/received")
 
+            # byte counts (NEW)
+            client.subscribe("$SYS/broker/bytes/sent")
+            client.subscribe("$SYS/broker/bytes/received")
         else:
             print(f"Failed to connect, return code {rc}")
 
     def on_message(self, client, userdata, msg):
         topic = msg.topic
-        payload = msg.payload.decode()
+        payload = msg.payload.decode(errors="ignore").strip()
         try:
-            if topic == "$SYS/broker/messages/received":  # Counts the number of PUBLISH messages received by the Broker.
-                self.last_received = int(payload)
-            elif topic == "$SYS/broker/messages/sent":   #"$SYS/broker/messages/sent":
-                self.last_sent = int(payload)
+            val = int(payload)
         except ValueError:
             print(f"Invalid payload received on topic {topic}: {payload}")
+            return
+
+        if topic == "$SYS/broker/messages/received":  # Counts the number of PUBLISH messages received by the Broker.
+            self.last_received = int(payload)
+        elif topic == "$SYS/broker/messages/sent":
+            self.last_sent = int(payload)
+        elif topic == "$SYS/broker/bytes/received":
+            self.last_bytes_received = val
+        elif topic == "$SYS/broker/bytes/sent":
+            self.last_bytes_sent = val
 
     def calculate_success_rate(self):
         if self.last_received > 0:
@@ -101,6 +126,88 @@ class MQTTBrokerMonitor:
                     writer.writerow(["Timestamp", "Messages Received", "Messages Sent", "Success Rate"])
                 writer.writerow([timestamp, self.last_received, self.last_sent, f"{success_rate:.2f}%"])
 
+    def log_stats(self):
+        success_rate = self.calculate_success_rate()
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        with open(self.data_file, "a", newline="") as file:
+            writer = csv.writer(file)
+            if file.tell() == 0:
+                writer.writerow([
+                    "Timestamp",
+                    "Messages Received", "Messages Sent",
+                    "Bytes Received", "Bytes Sent",  # NEW
+                    "Success Rate"
+                ])
+
+            writer.writerow([
+                timestamp,
+                self.last_received, self.last_sent,
+                self.last_bytes_received, self.last_bytes_sent,  # NEW
+                f"{success_rate:.2f}%" if success_rate is not None else ""
+            ])
+
+    def log_throughput(self):
+        now = time.time()
+
+        if self.prev_time is None:
+            self.prev_time = now
+            self.prev_sent = self.last_sent
+            self.prev_received = self.last_received
+            self.prev_bytes_sent = self.last_bytes_sent
+            self.prev_bytes_received = self.last_bytes_received
+            return
+
+        dt = now - self.prev_time
+        if dt <= 0:
+            return
+        # message deltas
+        d_sent = self.last_sent - (self.prev_sent or 0)
+        d_recv = self.last_received - (self.prev_received or 0)
+
+        # byte deltas
+        d_bsent = self.last_bytes_sent - (self.prev_bytes_sent or 0)
+        d_brecv = self.last_bytes_received - (self.prev_bytes_received or 0)
+
+        if d_sent < 0: d_sent = 0
+        if d_recv < 0: d_recv = 0
+        if d_bsent < 0: d_bsent = 0
+        if d_brecv < 0: d_brecv = 0
+
+        thr_sent = d_sent / dt
+        thr_recv = d_recv / dt
+        thr_bsent = d_bsent / dt
+        thr_brecv = d_brecv / dt
+
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
+        with open(self.data_file.replace(".csv", "_throughput.csv"),
+                  "a", newline="") as f:
+
+            w = csv.writer(f)
+            if f.tell() == 0:
+                w.writerow([
+                    "Timestamp",
+                    "Delta Sent", "Delta Received",
+                    "Throughput Sent (msg/s)",
+                    "Throughput Received (msg/s)",
+                    "Delta Bytes Sent", "Delta Bytes Received",
+                    "Throughput Bytes Sent (B/s)", "Throughput Bytes Received (B/s)"
+                ])
+
+            w.writerow([
+                timestamp,
+                d_sent, d_recv,
+                f"{thr_sent:.3f}",f"{thr_recv:.3f}",
+                d_bsent, d_brecv,
+                f"{thr_bsent:.3f}", f"{thr_brecv:.3f}"
+            ])
+
+        self.prev_time = now
+        self.prev_sent = self.last_sent
+        self.prev_received = self.last_received
+        self.prev_bytes_sent = self.last_bytes_sent
+        self.prev_bytes_received = self.last_bytes_received
 
     def start_monitoring(self):
             self.client.connect(self.broker_address, self.broker_port)
@@ -108,10 +215,11 @@ class MQTTBrokerMonitor:
             try:
                 while True:
                     time.sleep(self.interval)
-                    self.log_success_rate()
+                    self.log_stats()
+                    # self.log_success_rate()
+                    self.log_throughput()
             except KeyboardInterrupt:
                 print("Monitoring stopped by user")
             finally:
                 self.client.loop_stop()
                 self.client.disconnect()
-

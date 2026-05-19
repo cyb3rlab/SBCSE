@@ -7,7 +7,7 @@ import gc
 from mqtt_communication_module.mqtt_msghandler import MessageHandler
 from utils.timesim import TimeSim
 
-# 网络干扰状态
+# network interference status
 NETWORK_DISTURBANCE_STATUS = {
     "enabled": False,
     "packet_loss": 0.0,
@@ -18,12 +18,10 @@ NETWORK_DISTURBANCE_STATUS = {
 }
 
 def _log_network_event(topic, message_id, event, delay):
-    """记录每条消息的网络状态"""
     if NETWORK_DISTURBANCE_STATUS["log_file"] is None:
         return
     os.makedirs(os.path.dirname(NETWORK_DISTURBANCE_STATUS["log_file"]), exist_ok=True)
 
-    # 使用 current_timestamp() 替代 current_time()
     if NETWORK_DISTURBANCE_STATUS["use_timesim"]:
         current_time = NETWORK_DISTURBANCE_STATUS["use_timesim"].current_timestamp()
     else:
@@ -36,7 +34,7 @@ def _patched_send(original_send):
     def wrapper(self, data, topic, time_sim=None, file_path=None, qos=1, *args, **kwargs):
         delay = 0
         if NETWORK_DISTURBANCE_STATUS["enabled"]:
-            # 丢包逻辑
+            # packet loss logic
             if random.random() < NETWORK_DISTURBANCE_STATUS["packet_loss"]:
                 _log_network_event(topic, getattr(data, 'id', 'N/A'), 'dropped', 0)
                 print(f"[NetworkDisturb] Dropped message on topic: {topic}")
@@ -86,7 +84,6 @@ def _patch_on_message_with_delay(handler_instance):
 
             if NETWORK_DISTURBANCE_STATUS["delay_range"] and random.random() <= NETWORK_DISTURBANCE_STATUS["delay_chance"]:
                 delay = random.uniform(*NETWORK_DISTURBANCE_STATUS["delay_range"])
-
                 NETWORK_DISTURBANCE_STATUS["use_timesim"].sleep(delay)
 
                 _log_network_event(msg.topic, getattr(msg, 'mid', 'N/A'), 'recv_delayed', delay)
@@ -96,35 +93,9 @@ def _patch_on_message_with_delay(handler_instance):
     handler_instance.client.on_message = delayed_on_message
     print(f"[NetworkDisturb] recv delay patched for {handler_instance.__class__.__name__}")
 
-# def _patched_recv_thread(original_recv_thread):
-#     def wrapper(self, server, port, *args, **kwargs):
-#         print(f"[NetworkDisturb] Patched recv_thread running on port {port}")
-#         try:
-#             server.connect(self.broker, port, 60)
-#             while True:
-#                 if NETWORK_DISTURBANCE_STATUS["enabled"]:
-#                     if (NETWORK_DISTURBANCE_STATUS["delay_range"] and
-#                         random.random() < NETWORK_DISTURBANCE_STATUS["delay_chance"]):
-#                         delay = random.uniform(*NETWORK_DISTURBANCE_STATUS["delay_range"])
-#                         if NETWORK_DISTURBANCE_STATUS["use_timesim"]:
-#                             NETWORK_DISTURBANCE_STATUS["use_timesim"].sleep(delay)
-#                         else:
-#                             real_time.sleep(delay)
-#                         _log_network_event("recv_thread", "N/A", "recv_delay", delay)
-#
-#                     if random.random() < NETWORK_DISTURBANCE_STATUS["packet_loss"]:
-#                         _log_network_event("recv_thread", "N/A", "recv_dropped", 0)
-#                         print("[NetworkDisturb] Dropped one incoming message (simulated packet loss)")
-#                         continue
-#
-#                 server.loop(timeout=1.0)  # 非阻塞循环
-#         except Exception as e:
-#             print(f"Server connection failed: {e}")
-#     return wrapper
-
 
 def enable_network_disturbance(packet_loss=0.1, delay_range=(0.1, 0.5), delay_chance=1.0, use_timesim=None, log_file=None):
-    """启用网络干扰，并打补丁"""
+    # enable network interference and apply the patch
     NETWORK_DISTURBANCE_STATUS.update({
         "enabled": True,
         "packet_loss": packet_loss,
@@ -134,7 +105,7 @@ def enable_network_disturbance(packet_loss=0.1, delay_range=(0.1, 0.5), delay_ch
         "log_file": log_file
     })
 
-    # 打补丁
+    # apply patch
     if not hasattr(MessageHandler.send, "_patched"):
         MessageHandler.send = _patched_send(MessageHandler.send)
         MessageHandler.send._patched = True
@@ -143,13 +114,8 @@ def enable_network_disturbance(packet_loss=0.1, delay_range=(0.1, 0.5), delay_ch
         MessageHandler.rob_com_send = _patched_rob_com_send(MessageHandler.rob_com_send)
         MessageHandler.rob_com_send._patched = True
 
-    # # recv_thread
-    # if not hasattr(MessageHandler.recv_thread, "_patched"):
-    #     MessageHandler.recv_thread = _patched_recv_thread(
-    #         MessageHandler.recv_thread)
-    #   MessageHandler.recv_thread._patched = True
+
     for obj in gc.get_objects():
-        # 查找所有 MessageHandler 子类实例
         if isinstance(obj, MessageHandler):
             try:
                 _patch_on_message_with_delay(obj)
@@ -159,7 +125,6 @@ def enable_network_disturbance(packet_loss=0.1, delay_range=(0.1, 0.5), delay_ch
     print(f"[NetworkDisturb] Enabled: loss={packet_loss*100:.1f}%, delay={delay_range}s, delay_chance={delay_chance*100:.1f}%")
 
 def log_network_disturb_status(file_path):
-    """记录当前网络干扰的配置状态"""
     status = NETWORK_DISTURBANCE_STATUS
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     with open(file_path, 'a') as f:

@@ -182,7 +182,7 @@ class RpfMessageHandler(MessageHandler):
         else:
             success_attr = f"{command}_{result}"
         if rob_name is None:
-            rob_name = next(iter(self.rob_status_dict))          
+            rob_name = self.robothandler.peek()
         if result in [CmdConfig.SUCCESS, CmdConfig.ACCEPT, CmdConfig.ARRIVE, CmdConfig.COMPLETED]:
             # Set the attribute based on the result
             self.rob_status_dict[rob_name][success_attr] = True
