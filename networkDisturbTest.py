@@ -1,6 +1,7 @@
 import sys
 import signal
 import argparse
+import time as realtime
 from threading import Thread, Event
 from utils.utils import load_scenario
 from utils.storyboard import MqttConfig, ClientConfig, ScenarioConfig, Mode, LogConfig, CER
@@ -16,10 +17,10 @@ from mqtt_communication_module.cpu_monitor import MonitorCPU
 from mqtt_communication_module.network_disturb import enable_network_disturbance, log_network_disturb_status
 
 
-
 class Manager:
-    def __init__(self):
+    def __init__(self, duration,):
         # create TimeSim instance
+        self.duration = duration
         self.sim_speed = 10  # default
         self.time = TimeSim(self.sim_speed)
         self.task = []
@@ -85,9 +86,6 @@ class Manager:
             self.ATT_scenario = SCENARIO_NAME
             self.target = TARGET
             self.selected_protocol = PROTOCOL
-            # self.use_encryption = encryption
-            # self.time = TimeSim(self.sim_speed)
-            # self.time.time_scale = self.sim_speed
             self.time = external_timesim if external_timesim else TimeSim(self.sim_speed)
 
         # set port
@@ -135,9 +133,6 @@ class Manager:
 
     def start_server(self, block=True):
         self.running = True
-        # only set signal handler when blocking (i.e., interactive run)
-        if block:
-            signal.signal(signal.SIGINT, self.signal_handler)
 
         # connection_monitor
         connection_monitor = ConnectionMonitor(
@@ -181,12 +176,11 @@ class Manager:
                 print("Attack simulation finished or failed.")
             else:
                 print("Attack simulation started (non-blocking).")
-
-        # only block the thread/process when requested
         if block:
-            signal.pause()
+            realtime.sleep(self.duration)
+            print(f"Duration reached ({self.duration}s). Stopping server...")
+            self.stop_server()
         else:
-            # return to caller immediately (non-blocking)
             return
 
     def stop_server(self):
@@ -206,14 +200,15 @@ class Manager:
         print("Signal received, stopping server...")
         self.stop_server()
 
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--packet_loss", type=float, default=0.001)
-    parser.add_argument("--delay_min", type=float, default=1.5)
-    parser.add_argument("--delay_max", type=float, default=1.5)
+    parser.add_argument("--packet_loss", type=float, default=0.00)
+    parser.add_argument("--delay_min", type=float, default=0.65)
+    parser.add_argument("--delay_max", type=float, default=0.65)
+    # parser.add_argument("--delay_min", type=float, default=0.1x)
+    # parser.add_argument("--delay_max", type=float, default=0.6)
     parser.add_argument("--delay_chance", type=float, default=1)
+    parser.add_argument("--duration", type=int, default=10)
     args = parser.parse_args()
 
     Sim_Speed, _, _, _, _, _, _, _ = load_scenario(
@@ -238,7 +233,8 @@ if __name__ == "__main__":
         log_file=LogConfig.FILE_NETWORK_RUNTIME_REPORT
     )
     log_network_disturb_status(LogConfig.FILE_NETWORK_DISTURBANCE)
-    main = Manager()
+    DURATION = args.duration
+    main = Manager(duration=DURATION)
     main.sim_speed = Sim_Speed
     main.time = timesim
     main.setup_simulators(external_timesim=timesim)
