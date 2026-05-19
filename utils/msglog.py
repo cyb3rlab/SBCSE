@@ -221,7 +221,6 @@ def log_connection(file_path, connections, time_sim):
             writer.writeheader()
         writer.writerow({'timestamp': timestamp, 'connections': connections})
 
-
 # Record the number of connections and cpu
 def log_cpu(file_path, target, cpu_usage, time_sim):
     try:
@@ -242,3 +241,29 @@ def log_cpu(file_path, target, cpu_usage, time_sim):
                              })
     except json.JSONDecodeError as e:
         print(f"Error writing to log file: {e}")
+
+def log_cpu_row(path, target, system_cpu, proc_cpu, time_sim=None):
+
+    if time_sim is not None:
+        timesim = time_sim.current_jst_datetime()
+        ts = timesim.strftime("%Y-%m-%d %H:%M:%S.%f")
+    else:
+        ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+
+    with open(path, "a", newline="") as f:
+        w = csv.writer(f)
+
+        if f.tell() == 0:
+            w.writerow([
+                "Timestamp",
+                "Target Process",
+                "System CPU (%)",
+                "Process CPU (%)",
+            ])
+
+        w.writerow([
+            ts,
+            target,
+            f"{system_cpu:.2f}",
+            f"{proc_cpu:.2f}" if proc_cpu is not None else ""
+        ])
