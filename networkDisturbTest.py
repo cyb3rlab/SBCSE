@@ -205,7 +205,7 @@ if __name__ == "__main__":
     parser.add_argument("--packet_loss", type=float, default=0.00)
     parser.add_argument("--delay_min", type=float, default=0.65)
     parser.add_argument("--delay_max", type=float, default=0.65)
-    # parser.add_argument("--delay_min", type=float, default=0.1x)
+    # parser.add_argument("--delay_min", type=float, default=0.1)
     # parser.add_argument("--delay_max", type=float, default=0.6)
     parser.add_argument("--delay_chance", type=float, default=1)
     parser.add_argument("--duration", type=int, default=10)

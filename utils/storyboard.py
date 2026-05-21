@@ -23,11 +23,9 @@ Attributes:
 - TOKEN: Access token for authentication
 """
 
-# use localhost test
-# brew services start mosquitto
-# from utils.utils import generate_file_path
 from datetime import datetime
 import os
+
 
 class MqttConfig:
 
@@ -105,7 +103,7 @@ class LogConfig:
     speed = 10
 
     def generate_dir(output_dir):
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%s')
         directory = f'{output_dir}/{timestamp}'
         os.makedirs(directory, exist_ok=True)
         return directory
@@ -131,7 +129,7 @@ class LogConfig:
     FILE_NETWORK_DISTURBANCE = os.path.join(Generate_DIR, 'network_disturbance.csv')
     FILE_NETWORK_RUNTIME_REPORT = os.path.join(Generate_DIR, 'network_runtimereport.csv')
     FILE_NETWORK_DELAY_LIMIT = os.path.join(Generate_DIR, 'network_delay_limit_results.csv')
-
+    FILE_LOAD_RUNTIME_REPORT = os.path.join(Generate_DIR, 'load.csv')
 
     # datetime format
     DATETIME = '%Y-%m-%d %H:%M:%S.%f'
@@ -170,7 +168,6 @@ class LogConfig:
             FILE_BOS_LOG: RECV,
             FILE_ELV_LOG: SEND,
             FILE_BUILDING_LOG: SEND,
-
         },
         # E2D
         MqttConfig.TOPIC_E2D: {
@@ -445,7 +442,6 @@ class ScenarioConfig:
     FUZZ_TARGET = 'fuzz_target'
 
 
-
 class Mode:
     DEFAULT = "Default"
     Normal = "Normal"
@@ -467,6 +463,7 @@ class Mode:
         (BAC, BOS): (BAC, Normal),
         (BAC, RPF): (Normal, BAC),
     }
+
 
 class CER:
     U_RPF = "RPF"
@@ -571,6 +568,7 @@ class RobotConfig:
         ELVConfig.GO_ACCEPT: False,
         ELVConfig.GO_ARRIVE: False
     }
+
 
 class FuzzingConfig:
     ELVSIM = 'elvsim'
