@@ -254,6 +254,6 @@ class Main:
 
 if __name__ == "__main__":
     # Load the .kv file
-    Builder.load_file('layout.kv')
+    Builder.load_file('interface/layout.kv')
     app = SBCSEApp()
     app.run()
