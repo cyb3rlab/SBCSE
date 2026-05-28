@@ -45,7 +45,7 @@ The scenario file can be modified as needed to change the settings. Alternativel
 
 To use the GUI, run the following command, make the desired settings, then press the **Start** button to begin scenario execution.
 ```bash
-python interface.py
+python interface.py 
 ```
 
 For more information about the security testing capabilities of SBCSE, refer to the [security testing documentation](docs/security_testing.md).

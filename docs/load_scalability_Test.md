@@ -40,6 +40,9 @@ DURATION = 600
 
 This runs 50 robots for 10 minutes.
 
+Note:
+The scenario YAML file is automatically generated based on the configured `DEVICES` value using `utils/testyaml.py`. Each simulated robot is automatically assigned one `schedule_work` task.
+
 ---
 
 ## 2. Configure robot telemetry frequency
